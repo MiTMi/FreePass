@@ -4,7 +4,7 @@ import LocalAuthentication
 
 /// Manages secure storage of keys, salts, and secrets in the macOS Keychain.
 enum KeychainManager {
-    private static let service = "com.freepass.app"
+    private static let service = "com.freepass.app.dev"
 
     enum KeychainKey: String {
         case salt = "master_salt"

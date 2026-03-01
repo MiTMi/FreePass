@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// Displays the details of a single vault item with copy/reveal/edit/delete actions.
 struct VaultDetailView: View {
@@ -98,6 +99,25 @@ struct VaultDetailView: View {
         VStack(spacing: 0) {
             if !item.url.isEmpty {
                 detailRow(label: "Website", value: item.url, icon: "globe", copiable: true)
+                // Open & Fill action
+                Button {
+                    openAndFill()
+                } label: {
+                    HStack {
+                        Image(systemName: "safari.fill")
+                        Text(copiedField == "open_fill" ? "Filling..." : "Open & Fill")
+                    }
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(copiedField == "open_fill" ? .white : .fpAccentPurple)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(copiedField == "open_fill" ? Color.fpSuccess : Color.fpAccentPurple.opacity(0.15))
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+
                 Divider().background(Color.fpSurfaceBorder)
             }
 
@@ -280,5 +300,28 @@ struct VaultDetailView: View {
         }
         .buttonStyle(.plain)
         .help("Copy \(field)")
+    }
+
+    private func openAndFill() {
+        let urlString = item.url.lowercased().hasPrefix("http") ? item.url : "https://\(item.url)"
+        if let url = URL(string: urlString) {
+            
+            withAnimation(.easeOut(duration: 0.2)) {
+                copiedField = "open_fill"
+            }
+            
+            // Wait for Safari extension to wake up and ping localhost for this specific domain
+            let cleanDomain = item.url.lowercased().replacingOccurrences(of: "https://", with: "").replacingOccurrences(of: "http://", with: "").components(separatedBy: "/").first ?? item.url
+            ExtensionServer.shared.pendingAutoFillDomain = cleanDomain
+            
+            // Open the browser directly
+            NSWorkspace.shared.open(url)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    if copiedField == "open_fill" { copiedField = nil }
+                }
+            }
+        }
     }
 }

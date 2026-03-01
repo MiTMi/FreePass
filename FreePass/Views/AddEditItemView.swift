@@ -72,6 +72,9 @@ struct AddEditItemView: View {
                     // Title
                     formField(label: "Title", placeholder: "e.g. Google Account", text: $title)
 
+                    // URL
+                    formField(label: "Website URL", placeholder: "e.g. https://google.com", text: $url)
+
                     // Username
                     formField(label: "Username / Email", placeholder: "e.g. user@example.com", text: $username)
 
@@ -126,9 +129,6 @@ struct AddEditItemView: View {
                                 .foregroundColor(strength.color)
                         }
                     }
-
-                    // URL
-                    formField(label: "Website URL", placeholder: "e.g. https://google.com", text: $url)
 
                     // Notes
                     VStack(alignment: .leading, spacing: 6) {

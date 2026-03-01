@@ -44,23 +44,31 @@ final class AppState {
             try KeychainManager.save(salt, for: .salt)
             try KeychainManager.save(verificationHash, for: .verificationHash)
 
+            var touchIDSucceeded = false
             if enableTouchID {
-                let keyData = key.withUnsafeBytes { Data($0) }
-                try KeychainManager.saveBiometricProtectedKey(keyData)
+                do {
+                    let keyData = key.withUnsafeBytes { Data($0) }
+                    try KeychainManager.saveBiometricProtectedKey(keyData)
+                    touchIDSucceeded = true
+                } catch {
+                    print("Could not enable Touch ID (often due to local sandbox entitlement constraints): \(error)")
+                    // We do not throw here, so the vault is still successfully created,
+                    // just without Touch ID capabilities.
+                }
             }
+
+            self.derivedKey = key
+            self.touchIDEnabled = touchIDSucceeded
+            self.isFirstLaunch = false
+            self.isUnlocked = true
+            self.errorMessage = nil
+            resetInactivityTimer()
         } catch {
             // Clean up partial state if anything fails
             KeychainManager.delete(for: .salt)
             KeychainManager.delete(for: .verificationHash)
             throw error
         }
-
-        self.derivedKey = key
-        self.touchIDEnabled = enableTouchID
-        self.isFirstLaunch = false
-        self.isUnlocked = true
-        self.errorMessage = nil
-        resetInactivityTimer()
     }
 
     // MARK: - Unlock
@@ -84,9 +92,13 @@ final class AppState {
             // Self-healing: Automatically enable and save Touch ID on successful password 
             // unlock if the device supports it, repairing any broken keychain state.
             if BiometricAuth.isAvailable {
-                let keyData = key.withUnsafeBytes { Data($0) }
-                try? KeychainManager.saveBiometricProtectedKey(keyData)
-                self.touchIDEnabled = true
+                do {
+                    let keyData = key.withUnsafeBytes { Data($0) }
+                    try KeychainManager.saveBiometricProtectedKey(keyData)
+                    self.touchIDEnabled = true
+                } catch {
+                    print("Auto-enable Touch ID failed: \(error)")
+                }
             }
             
             self.derivedKey = key
