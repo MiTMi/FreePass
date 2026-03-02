@@ -22,11 +22,29 @@ struct VaultDetailView: View {
         return item.decryptedNotes(using: key)
     }
 
+    private var decryptedCardNumber: String? {
+        guard let key = appState.derivedKey else { return nil }
+        return item.decryptedCardNumber(using: key)
+    }
+
+    private var decryptedCardExpiration: String? {
+        guard let key = appState.derivedKey else { return nil }
+        return item.decryptedCardExpiration(using: key)
+    }
+
+    private var decryptedCardCVV: String? {
+        guard let key = appState.derivedKey else { return nil }
+        return item.decryptedCardCVV(using: key)
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 header
-                credentialsSection
+                let cat = VaultCategory(rawValue: item.category) ?? .login
+                if cat == .login || cat == .creditCard {
+                    detailsSection
+                }
                 if item.encryptedNotes != nil {
                     notesSection
                 }
@@ -95,77 +113,92 @@ struct VaultDetailView: View {
 
     // MARK: - Credentials Section
 
-    private var credentialsSection: some View {
-        VStack(spacing: 0) {
-            if !item.url.isEmpty {
-                detailRow(label: "Website", value: item.url, icon: "globe", copiable: true)
-                // Open & Fill action
-                Button {
-                    openAndFill()
-                } label: {
-                    HStack {
-                        Image(systemName: "safari.fill")
-                        Text(copiedField == "open_fill" ? "Filling..." : "Open & Fill")
-                    }
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(copiedField == "open_fill" ? .white : .fpAccentPurple)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(copiedField == "open_fill" ? Color.fpSuccess : Color.fpAccentPurple.opacity(0.15))
-                    .cornerRadius(8)
-                }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
-
-                Divider().background(Color.fpSurfaceBorder)
-            }
-
-            detailRow(label: "Username", value: item.username, icon: "person", copiable: true)
-            Divider().background(Color.fpSurfaceBorder)
-
-            // Password row (special handling for reveal toggle)
-            HStack(alignment: .top) {
-                Image(systemName: "key.fill")
-                    .foregroundColor(.fpAccentPurple)
-                    .frame(width: 20)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Password")
-                        .font(.caption)
-                        .foregroundColor(.fpTextSecondary)
-
-                    HStack {
-                        if showPassword {
-                            Text(decryptedPassword)
-                                .font(.system(size: 14, design: .monospaced))
-                                .foregroundColor(.fpTextPrimary)
-                                .textSelection(.enabled)
-                        } else {
-                            Text("••••••••••••")
-                                .font(.system(size: 14))
-                                .foregroundColor(.fpTextSecondary)
-                        }
-                    }
-                }
-
-                Spacer()
-
-                HStack(spacing: 8) {
+    private var detailsSection: some View {
+        let cat = VaultCategory(rawValue: item.category) ?? .login
+        return VStack(spacing: 0) {
+            if cat == .login {
+                if !item.url.isEmpty {
+                    detailRow(label: "Website", value: item.url, icon: "globe", copiable: true)
+                    // Open & Fill action
                     Button {
-                        showPassword.toggle()
+                        openAndFill()
                     } label: {
-                        Image(systemName: showPassword ? "eye.slash" : "eye")
-                            .foregroundColor(.fpTextSecondary)
+                        HStack {
+                            Image(systemName: "safari.fill")
+                            Text(copiedField == "open_fill" ? "Filling..." : "Open & Fill")
+                        }
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(copiedField == "open_fill" ? .white : .fpAccentPurple)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(copiedField == "open_fill" ? Color.fpSuccess : Color.fpAccentPurple.opacity(0.15))
+                        .cornerRadius(8)
                     }
                     .buttonStyle(.plain)
-                    .help(showPassword ? "Hide password" : "Show password")
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
 
-                    copyButton(value: decryptedPassword, field: "password")
+                    Divider().background(Color.fpSurfaceBorder)
+                }
+
+                detailRow(label: "Username", value: item.username, icon: "person", copiable: true)
+                Divider().background(Color.fpSurfaceBorder)
+
+                // Password row (special handling for reveal toggle)
+                HStack(alignment: .top) {
+                    Image(systemName: "key.fill")
+                        .foregroundColor(.fpAccentPurple)
+                        .frame(width: 20)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Password")
+                            .font(.caption)
+                            .foregroundColor(.fpTextSecondary)
+
+                        HStack {
+                            if showPassword {
+                                Text(decryptedPassword)
+                                    .font(.system(size: 14, design: .monospaced))
+                                    .foregroundColor(.fpTextPrimary)
+                                    .textSelection(.enabled)
+                            } else {
+                                Text("••••••••••••")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.fpTextSecondary)
+                            }
+                        }
+                    }
+
+                    Spacer()
+
+                    HStack(spacing: 8) {
+                        Button {
+                            showPassword.toggle()
+                        } label: {
+                            Image(systemName: showPassword ? "eye.slash" : "eye")
+                                .foregroundColor(.fpTextSecondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help(showPassword ? "Hide password" : "Show password")
+
+                        copyButton(value: decryptedPassword, field: "password")
+                    }
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+            } else if cat == .creditCard {
+                if let num = decryptedCardNumber, !num.isEmpty {
+                    detailRow(label: "Card Number", value: num, icon: "creditcard", copiable: true)
+                    Divider().background(Color.fpSurfaceBorder)
+                }
+                if let exp = decryptedCardExpiration, !exp.isEmpty {
+                    detailRow(label: "Expiration", value: exp, icon: "calendar", copiable: true)
+                    Divider().background(Color.fpSurfaceBorder)
+                }
+                if let cvv = decryptedCardCVV, !cvv.isEmpty {
+                    detailRow(label: "CVV", value: cvv, icon: "lock.fill", copiable: true)
                 }
             }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
         }
         .fpCard()
     }

@@ -40,9 +40,12 @@ struct OnboardingView: View {
                         )
                         .frame(width: 120, height: 120)
 
-                    Image(systemName: "lock.shield.fill")
-                        .font(.system(size: 48, weight: .medium))
-                        .foregroundStyle(Color.fpGradient)
+                    Image("AppLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 86, height: 86)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .shadow(color: Color.black.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .scaleEffect(animateIn ? 1.0 : 0.5)
                 .opacity(animateIn ? 1.0 : 0)

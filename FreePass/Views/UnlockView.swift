@@ -25,9 +25,12 @@ struct UnlockView: View {
                         )
                         .frame(width: 110, height: 110)
 
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 44, weight: .medium))
-                        .foregroundStyle(Color.fpGradient)
+                    Image("AppLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 120, height: 120)
+                        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+                        .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
                 }
                 .scaleEffect(animateIn ? 1.0 : 0.6)
                 .opacity(animateIn ? 1.0 : 0)

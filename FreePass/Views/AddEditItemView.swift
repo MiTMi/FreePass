@@ -4,7 +4,7 @@ import SwiftData
 /// Sheet for adding or editing a vault item.
 struct AddEditItemView: View {
     enum Mode {
-        case add
+        case add(initialCategory: VaultCategory = .login)
         case edit(VaultItem)
     }
 
@@ -19,6 +19,9 @@ struct AddEditItemView: View {
     @State private var password = ""
     @State private var url = ""
     @State private var notes = ""
+    @State private var cardNumber = ""
+    @State private var cardExpiration = ""
+    @State private var cardCVV = ""
     @State private var category: VaultCategory = .login
     @State private var isFavorite = false
     @State private var showPassword = false
@@ -31,7 +34,14 @@ struct AddEditItemView: View {
     }
 
     private var isFormValid: Bool {
-        !title.isEmpty && !password.isEmpty
+        if title.isEmpty { return false }
+        switch category {
+        case .login: return !password.isEmpty
+        case .secureNote: return true
+        case .creditCard: return !cardNumber.isEmpty
+        case .identity: return true
+        default: return true
+        }
     }
 
     var body: some View {
@@ -66,67 +76,77 @@ struct AddEditItemView: View {
                                 Label(cat.rawValue, systemImage: cat.icon).tag(cat)
                             }
                         }
-                        .pickerStyle(.segmented)
+                        .pickerStyle(.menu)
+                        .background(Color.fpSurfaceHover)
+                        .cornerRadius(6)
                     }
 
                     // Title
-                    formField(label: "Title", placeholder: "e.g. Google Account", text: $title)
+                    formField(label: category == .creditCard ? "Card Name" : "Title", placeholder: category == .creditCard ? "e.g. Chase Sapphire" : "e.g. Google Account", text: $title)
 
-                    // URL
-                    formField(label: "Website URL", placeholder: "e.g. https://google.com", text: $url)
+                    if category == .login {
+                        // URL
+                        formField(label: "Website URL", placeholder: "e.g. https://google.com", text: $url)
 
-                    // Username
-                    formField(label: "Username / Email", placeholder: "e.g. user@example.com", text: $username)
+                        // Username
+                        formField(label: "Username / Email", placeholder: "e.g. user@example.com", text: $username)
 
-                    // Password
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Password")
-                            .font(.caption)
-                            .foregroundColor(.fpTextSecondary)
-                        HStack(spacing: 8) {
-                            Group {
-                                if showPassword {
-                                    TextField("Password", text: $password)
-                                } else {
-                                    SecureField("Password", text: $password)
+                        // Password
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Password")
+                                .font(.caption)
+                                .foregroundColor(.fpTextSecondary)
+                            HStack(spacing: 8) {
+                                Group {
+                                    if showPassword {
+                                        TextField("Password", text: $password)
+                                    } else {
+                                        SecureField("Password", text: $password)
+                                    }
                                 }
-                            }
-                            .fpTextField()
+                                .fpTextField()
 
-                            Button {
-                                showPassword.toggle()
-                            } label: {
-                                Image(systemName: showPassword ? "eye.slash" : "eye")
-                                    .foregroundColor(.fpTextSecondary)
-                                    .frame(width: 32, height: 32)
-                            }
-                            .buttonStyle(.plain)
+                                Button {
+                                    showPassword.toggle()
+                                } label: {
+                                    Image(systemName: showPassword ? "eye.slash" : "eye")
+                                        .foregroundColor(.fpTextSecondary)
+                                        .frame(width: 32, height: 32)
+                                }
+                                .buttonStyle(.plain)
 
-                            Button {
-                                showGenerator = true
-                            } label: {
-                                Image(systemName: "key.fill")
-                                    .foregroundColor(.fpAccentPurple)
-                                    .frame(width: 32, height: 32)
+                                Button {
+                                    showGenerator = true
+                                } label: {
+                                    Image(systemName: "key.fill")
+                                        .foregroundColor(.fpAccentPurple)
+                                        .frame(width: 32, height: 32)
+                                }
+                                .buttonStyle(.plain)
+                                .help("Generate password")
                             }
-                            .buttonStyle(.plain)
-                            .help("Generate password")
+
+                            if !password.isEmpty {
+                                let strength = PasswordGenerator.evaluateStrength(password)
+                                HStack(spacing: 4) {
+                                    ForEach(PasswordStrength.allCases, id: \.self) { level in
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(level.rawValue <= strength.rawValue
+                                                  ? strength.color
+                                                  : Color.fpSurfaceBorder)
+                                            .frame(height: 3)
+                                    }
+                                }
+                                Text(strength.label)
+                                    .font(.caption2)
+                                    .foregroundColor(strength.color)
+                            }
                         }
-
-                        if !password.isEmpty {
-                            let strength = PasswordGenerator.evaluateStrength(password)
-                            HStack(spacing: 4) {
-                                ForEach(PasswordStrength.allCases, id: \.self) { level in
-                                    RoundedRectangle(cornerRadius: 2)
-                                        .fill(level.rawValue <= strength.rawValue
-                                              ? strength.color
-                                              : Color.fpSurfaceBorder)
-                                        .frame(height: 3)
-                                }
-                            }
-                            Text(strength.label)
-                                .font(.caption2)
-                                .foregroundColor(strength.color)
+                    } else if category == .creditCard {
+                        formField(label: "Card Number", placeholder: "e.g. 4111 1111 1111 1111", text: $cardNumber)
+                        HStack(spacing: 16) {
+                            formField(label: "Expiration", placeholder: "MM/YY", text: $cardExpiration)
+                            formField(label: "CVV", placeholder: "123", text: $cardCVV)
                         }
                     }
 
@@ -213,16 +233,23 @@ struct AddEditItemView: View {
     }
 
     private func loadExistingData() {
-        guard case .edit(let item) = mode else { return }
-        title = item.title
-        username = item.username
-        url = item.url
-        isFavorite = item.isFavorite
-        category = VaultCategory(rawValue: item.category) ?? .login
+        switch mode {
+        case .add(let initialCategory):
+            category = initialCategory
+        case .edit(let item):
+            title = item.title
+            username = item.username
+            url = item.url
+            isFavorite = item.isFavorite
+            category = VaultCategory(rawValue: item.category) ?? .login
 
-        if let key = appState.derivedKey {
-            password = item.decryptedPassword(using: key) ?? ""
-            notes = item.decryptedNotes(using: key) ?? ""
+            if let key = appState.derivedKey {
+                password = item.decryptedPassword(using: key) ?? ""
+                notes = item.decryptedNotes(using: key) ?? ""
+                cardNumber = item.decryptedCardNumber(using: key) ?? ""
+                cardExpiration = item.decryptedCardExpiration(using: key) ?? ""
+                cardCVV = item.decryptedCardCVV(using: key) ?? ""
+            }
         }
     }
 
@@ -235,6 +262,9 @@ struct AddEditItemView: View {
         do {
             let encryptedPassword = try CryptoManager.encrypt(password, using: key)
             let encryptedNotes: Data? = notes.isEmpty ? nil : try CryptoManager.encrypt(notes, using: key)
+            let encryptedCardNumber: Data? = cardNumber.isEmpty ? nil : try CryptoManager.encrypt(cardNumber, using: key)
+            let encryptedCardExpiration: Data? = cardExpiration.isEmpty ? nil : try CryptoManager.encrypt(cardExpiration, using: key)
+            let encryptedCardCVV: Data? = cardCVV.isEmpty ? nil : try CryptoManager.encrypt(cardCVV, using: key)
 
             switch mode {
             case .add:
@@ -244,6 +274,9 @@ struct AddEditItemView: View {
                     encryptedPassword: encryptedPassword,
                     url: url,
                     encryptedNotes: encryptedNotes,
+                    encryptedCardNumber: encryptedCardNumber,
+                    encryptedCardExpiration: encryptedCardExpiration,
+                    encryptedCardCVV: encryptedCardCVV,
                     category: category.rawValue,
                     isFavorite: isFavorite
                 )
@@ -255,6 +288,9 @@ struct AddEditItemView: View {
                 item.encryptedPassword = encryptedPassword
                 item.url = url
                 item.encryptedNotes = encryptedNotes
+                item.encryptedCardNumber = encryptedCardNumber
+                item.encryptedCardExpiration = encryptedCardExpiration
+                item.encryptedCardCVV = encryptedCardCVV
                 item.category = category.rawValue
                 item.isFavorite = isFavorite
                 item.updatedAt = Date()
