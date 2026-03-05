@@ -103,7 +103,8 @@ enum KeychainManager {
             kSecAttrAccount as String: KeychainKey.biometricKey.rawValue,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecUseAuthenticationContext as String: context
+            kSecUseAuthenticationContext as String: context,
+            kSecUseAuthenticationUI as String: kSecUseAuthenticationUIAllow
         ]
 
         var result: AnyObject?

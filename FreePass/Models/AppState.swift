@@ -14,6 +14,7 @@ final class AppState {
         set { UserDefaults.standard.set(newValue, forKey: "touchIDEnabled") }
     }
     var errorMessage: String?
+    var hasPromptedForTouchIDOnLaunch = false
     private(set) var isLoading = false
 
     private var inactivityTimer: Timer?
@@ -128,7 +129,16 @@ final class AppState {
                 } catch {
                     Task { @MainActor in
                         if let keychainErr = error as? KeychainError, case .loadFailed(let status) = keychainErr {
-                            self.errorMessage = "Touch ID authentication failed (status: \(status))."
+                            if status == errSecUserCanceled {
+                                // User simply cancelled the prompt. No error.
+                                self.errorMessage = nil
+                            } else if status == errSecItemNotFound {
+                                // Sometimes macOS returns errSecItemNotFound if the user cancels or the prompt fails.
+                                // Do NOT disable the TouchID flag here, as it permanently hides the button.
+                                self.errorMessage = nil
+                            } else {
+                                self.errorMessage = "Touch ID authentication failed (status: \(status))."
+                            }
                         } else {
                             self.errorMessage = "Touch ID authentication failed."
                         }

@@ -34,7 +34,8 @@ struct FaviconView: View {
 
     private var faviconUrl: URL? {
         guard let domain = domainStr, !domain.isEmpty else { return nil }
-        return URL(string: "https://icons.duckduckgo.com/ip3/\(domain).ico")
+        // Use Google's service with a larger size (128) to ensure high resolution.
+        return URL(string: "https://www.google.com/s2/favicons?domain=\(domain)&sz=128")
     }
 
     var body: some View {
@@ -54,8 +55,9 @@ struct FaviconView: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: size * 0.65, height: size * 0.65)
-                            .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
+                            .frame(width: size * 0.85, height: size * 0.85)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: size * (4.0 / 36.0), style: .continuous))
                     case .failure:
                         fallbackIconView
                     @unknown default:

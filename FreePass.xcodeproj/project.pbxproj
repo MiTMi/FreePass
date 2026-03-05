@@ -207,14 +207,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FFCD9DD9DA440857FDE6958C /* Build configuration list for PBXNativeTarget "FreePass" */;
 			buildPhases = (
-				B1BCA9C0132434053401AD90 /* Sources */,
-				506EC0C1E6873CD74A44A876 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FreePass;
+                                B1BCA9C0132434053401AD90 /* Sources */,
+                                506EC0C1E6873CD74A44A876 /* Resources */,
+                                4C8EF9D82F599EA60039D643 /* Embed Foundation Extensions */,
+                        );
+                        buildRules = (
+                        );
+                        dependencies = (
+                                4C8EF9C22F599EA60039D643 /* PBXTargetDependency */,
+                        );
+                        name = FreePass;
 			packageProductDependencies = (
 			);
 			productName = FreePass;
@@ -567,14 +569,14 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Michael-Touboul.FreePassExtension";
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -615,14 +617,14 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Michael-Touboul.FreePassExtension";
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -662,12 +664,12 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Michael-Touboul.FreePassExtension.Extension";
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -703,12 +705,12 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Michael-Touboul.FreePassExtension.Extension";
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
