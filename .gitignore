@@ -17,10 +17,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 
-# Project Generation
-*.xcodeproj/
-*.xcworkspace/
-project.xcworkspace/
+# Project Generation (no longer ignoring .xcodeproj — tracked for portability)
+# xcuserdata/ is still ignored above to avoid personal Xcode preferences
 
 # Swift Package Manager
 .build/
