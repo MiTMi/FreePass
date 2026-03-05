@@ -64,14 +64,11 @@ struct VaultDetailView: View {
 
     private var header: some View {
         HStack(spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color.fpAccentPurple.opacity(0.15))
-                    .frame(width: 56, height: 56)
-                Image(systemName: VaultCategory(rawValue: item.category)?.icon ?? "doc.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.fpAccentPurple)
-            }
+            FaviconView(
+                urlString: item.category == VaultCategory.login.rawValue ? item.url : "",
+                fallbackIcon: VaultCategory(rawValue: item.category)?.icon ?? "doc.fill",
+                size: 56
+            )
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {

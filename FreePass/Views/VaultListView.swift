@@ -426,15 +426,8 @@ struct VaultItemRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Category icon
-            ZStack {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.fpAccentPurple.opacity(0.15))
-                    .frame(width: 36, height: 36)
-                Image(systemName: categoryIcon)
-                    .font(.system(size: 15))
-                    .foregroundColor(.fpAccentPurple)
-            }
+            // Category icon / Favicon
+            FaviconView(urlString: item.category == VaultCategory.login.rawValue ? item.url : "", fallbackIcon: categoryIcon, size: 36)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
