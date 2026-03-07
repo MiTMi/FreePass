@@ -94,6 +94,13 @@ struct VaultListView: View {
                 }
                 .help("Password generator")
 
+                #if os(macOS)
+                SettingsLink {
+                    Image(systemName: "gearshape.fill")
+                }
+                .help("Settings")
+                #endif
+
                 Button { appState.lock() } label: {
                     Image(systemName: "lock.fill")
                 }

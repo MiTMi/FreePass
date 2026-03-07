@@ -3,11 +3,19 @@ import Security
 
 /// Generates cryptographically strong random passwords.
 struct PasswordGenerator {
-    var length: Int = 20
-    var includeUppercase: Bool = true
-    var includeLowercase: Bool = true
-    var includeDigits: Bool = true
-    var includeSymbols: Bool = true
+    var length: Int
+    var includeUppercase: Bool
+    var includeLowercase: Bool
+    var includeDigits: Bool
+    var includeSymbols: Bool
+
+    init() {
+        self.length = UserDefaults.standard.object(forKey: "defaultPasswordLength") != nil ? UserDefaults.standard.integer(forKey: "defaultPasswordLength") : 20
+        self.includeUppercase = UserDefaults.standard.object(forKey: "defaultPasswordUppercase") != nil ? UserDefaults.standard.bool(forKey: "defaultPasswordUppercase") : true
+        self.includeLowercase = UserDefaults.standard.object(forKey: "defaultPasswordLowercase") != nil ? UserDefaults.standard.bool(forKey: "defaultPasswordLowercase") : true
+        self.includeDigits = UserDefaults.standard.object(forKey: "defaultPasswordDigits") != nil ? UserDefaults.standard.bool(forKey: "defaultPasswordDigits") : true
+        self.includeSymbols = UserDefaults.standard.object(forKey: "defaultPasswordSymbols") != nil ? UserDefaults.standard.bool(forKey: "defaultPasswordSymbols") : true
+    }
 
     private static let uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     private static let lowercaseChars = "abcdefghijklmnopqrstuvwxyz"

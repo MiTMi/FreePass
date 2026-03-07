@@ -21,7 +21,10 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.4), value: appState.isUnlocked)
         .animation(.easeInOut(duration: 0.4), value: appState.isFirstLaunch)
         .onAppear {
-            startExtensionServer()
+            let extensionEnabled = UserDefaults.standard.object(forKey: "extensionEnabled") == nil ? true : UserDefaults.standard.bool(forKey: "extensionEnabled")
+            if extensionEnabled {
+                startExtensionServer()
+            }
         }
     }
     
@@ -143,5 +146,11 @@ final class ExtensionServer: @unchecked Sendable {
         } catch {
             print("Failed to start server: \(error)")
         }
+    }
+    
+    func stop() {
+        listener?.cancel()
+        listener = nil
+        print("Extension server stopped")
     }
 }

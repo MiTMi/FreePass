@@ -1,6 +1,9 @@
 import Foundation
 import CryptoKit
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 /// Global application state managing lock/unlock, master password, and inactivity timer.
 @Observable
@@ -16,12 +19,68 @@ final class AppState {
     var errorMessage: String?
     var hasPromptedForTouchIDOnLaunch = false
     private(set) var isLoading = false
-
     private var inactivityTimer: Timer?
-    private let lockTimeout: TimeInterval = 300 // 5 minutes
+
+    var lockTimeout: TimeInterval {
+        get { 
+            if UserDefaults.standard.object(forKey: "lockTimeout") == nil {
+                return 300 // Default to 5 minutes
+            }
+            return UserDefaults.standard.double(forKey: "lockTimeout")
+        }
+        set { 
+            UserDefaults.standard.set(newValue, forKey: "lockTimeout") 
+            resetInactivityTimer() // Reset immediately when changed
+        }
+    }
+
+    var lockOnSleep: Bool {
+        get {
+            if UserDefaults.standard.object(forKey: "lockOnSleep") == nil { return true }
+            return UserDefaults.standard.bool(forKey: "lockOnSleep")
+        }
+        set { UserDefaults.standard.set(newValue, forKey: "lockOnSleep") }
+    }
+
+    var clearClipboardDelay: TimeInterval {
+        get {
+            if UserDefaults.standard.object(forKey: "clearClipboardDelay") == nil { return 30 }
+            return UserDefaults.standard.double(forKey: "clearClipboardDelay")
+        }
+        set { UserDefaults.standard.set(newValue, forKey: "clearClipboardDelay") }
+    }
+
+    var showMenuBarIcon: Bool {
+        get {
+            if UserDefaults.standard.object(forKey: "showMenuBarIcon") == nil { return true }
+            return UserDefaults.standard.bool(forKey: "showMenuBarIcon")
+        }
+        set { UserDefaults.standard.set(newValue, forKey: "showMenuBarIcon") }
+    }
 
     init() {
         checkFirstLaunch()
+        
+        #if os(macOS)
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.screensDidSleepNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.lockOnSleep == true {
+                self?.lock()
+            }
+        }
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.willSleepNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.lockOnSleep == true {
+                self?.lock()
+            }
+        }
+        #endif
     }
 
     /// Checks if a vault has been set up before.
@@ -163,9 +222,12 @@ final class AppState {
     /// Resets the inactivity auto-lock timer.
     func resetInactivityTimer() {
         inactivityTimer?.invalidate()
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: lockTimeout, repeats: false) { [weak self] _ in
-            Task { @MainActor in
-                self?.lock()
+        let timeout = lockTimeout
+        if timeout > 0 {
+            inactivityTimer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [weak self] _ in
+                Task { @MainActor in
+                    self?.lock()
+                }
             }
         }
     }

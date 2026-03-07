@@ -6,7 +6,12 @@ import Combine
 final class ClipboardManager {
     static let shared = ClipboardManager()
     private var clearTimer: Timer?
-    private static let clearDelay: TimeInterval = 30
+    private var clearDelay: TimeInterval {
+        if UserDefaults.standard.object(forKey: "clearClipboardDelay") == nil {
+            return 30
+        }
+        return UserDefaults.standard.double(forKey: "clearClipboardDelay")
+    }
 
     private init() {}
 
@@ -27,9 +32,12 @@ final class ClipboardManager {
 
     private func scheduleClear() {
         clearTimer?.invalidate()
-        clearTimer = Timer.scheduledTimer(withTimeInterval: Self.clearDelay, repeats: false) { [weak self] _ in
-            Task { @MainActor in
-                self?.clear()
+        let delay = clearDelay
+        if delay > 0 {
+            clearTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+                Task { @MainActor in
+                    self?.clear()
+                }
             }
         }
     }

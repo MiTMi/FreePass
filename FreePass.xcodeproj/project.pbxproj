@@ -3,51 +3,82 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		037E8315F2A2CFD2CACA04E7 /* VaultDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1CFC041BD48AD0D160BE95 /* VaultDetailView.swift */; };
 		0990AF10522D7C6B425FE2FE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7543175A6296806120ECFC1 /* AppState.swift */; };
 		1060BB71A65F2381EAEF375D /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F2C7501A86DAA0CB7E83B4 /* ClipboardManager.swift */; };
+		168429805D1B5CAFD8D5F2BD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5C5F1A4DD90D5BA3C6845C /* SettingsView.swift */; };
+		1C221CAAD08BE0399991C95F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282E1054C1F6AE341AE844B4 /* SafariWebExtensionHandler.swift */; };
+		1C4BF140E659E29A1076894D /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = C563CACEDD4096BC6EA292D8 /* manifest.json */; };
 		2388CBE4763F16B2103CF044 /* UnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E9469D4095BDDE7A37350 /* UnlockView.swift */; };
+		257FAC795ECF6B175EE44CD4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9593811AF11CE3332808FF1E /* ViewController.swift */; };
 		26991DAA53F0C097C1ED2A90 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8081AD8186BDB4CC0A5A9EB0 /* KeychainManager.swift */; };
 		36634A29E105304E23ADA640 /* VaultListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FDD91658AFA04515281EE8 /* VaultListView.swift */; };
+		392AE5C7008CFA0941BC6872 /* messages.json in Resources */ = {isa = PBXBuildFile; fileRef = 9659AFCDCE4962F15561D37D /* messages.json */; };
+		3F91F5469AE2EB0D5061D0B9 /* icon-96.png in Resources */ = {isa = PBXBuildFile; fileRef = FB20E9B041A48F16F451F199 /* icon-96.png */; };
 		4B7510460808238363391B8C /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E31D60D0A4B15B988595DC6 /* MenuBarPopoverView.swift */; };
-		4C8EF9C02F599EA60039D643 /* FreePassExtension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4C8EF9BF2F599EA60039D643 /* FreePassExtension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4E7976291941BC707722470B /* VaultItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD4BAB9F1ABB4144802FB8E /* VaultItem.swift */; };
+		585CC4FDFAE0C2E67A1C22DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 868484180026D9DCF446AB77 /* Assets.xcassets */; };
 		616A930902C4C68C8BC464E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27043D5869BEDC380E7AAE60 /* Assets.xcassets */; };
 		62445987474E23B20189349C /* PasswordGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F271024E187ED1672B74993D /* PasswordGenerator.swift */; };
-		EA36BDA7FF6244F2A5BCD215 /* FaviconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E01C2BC3C349C68A9026F6 /* FaviconView.swift */; };
+		6A6D7D8B4EAC069DDEDBC3DE /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 471084832E6983EA758A6170 /* background.js */; };
+		6CC4C5183117ECE0E508CFDB /* icon-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 0E86C984AD044140FCC2F42E /* icon-64.png */; };
+		71B8DEA0AD7DAF4D71A753FE /* icon-48.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BAF55FD2C935C6A9BED8B90 /* icon-48.png */; };
 		758173F0DCB305154570381F /* CryptoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3053FFA56CA6A321178A7B2F /* CryptoManager.swift */; };
+		882914D6DA3093DFFB07A0F6 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 6DCD9AF329B3E211C75207D7 /* content.js */; };
+		8AAB0A3156B07BD39DD1D618 /* icon-512.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E7E60D940334FBEE355BEA /* icon-512.png */; };
+		9412C526BA662E6D0959A9F2 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 2CA25616BF70F18D92E09A29 /* popup.js */; };
 		96DC209BFB190C399F601903 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A9D1F089185CA366CC67B1 /* ContentView.swift */; };
+		9C08550A1411B3ABEC3C1D34 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = CF1A8A35B42FC459EBEAA752 /* popup.html */; };
+		9FDE49FD888221D444E521FD /* FaviconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113AB6E631C8FF44D1349287 /* FaviconView.swift */; };
+		A5BDB08E63A6DF33A66A25F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733A24ADC8158A0A679D262 /* AppDelegate.swift */; };
+		A7FCF52BCCD1AA64EAF45F16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF92685B1C9B3599F8C26A2F /* Main.storyboard */; };
+		A89B071FB29B84DAF5E9B97B /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EFA0867C09F4DD5583F3F0C /* Icon.png */; };
 		AD65DB6E1428BEB16BDEF082 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC8D21D9B403B23F091201 /* Theme.swift */; };
 		B840EC38E3856E4D84B79E8C /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5F421A9E640075EA7AA259 /* OnboardingView.swift */; };
+		BBAABB458915A2A841C23B2B /* FreePassExtension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 887EDFB70C2F5486EC4C34E9 /* FreePassExtension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BC8C398729F235BAD1978D01 /* icon-128.png in Resources */ = {isa = PBXBuildFile; fileRef = 84C4D6C3171B2E2AE28975E1 /* icon-128.png */; };
 		BEFD3E436AEB20B9574F49E5 /* BiometricAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459C590DC702E9F584B5F8BE /* BiometricAuth.swift */; };
+		C156243841F883564AE5D52B /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = 522AA74D2B2117FC5EB8E512 /* popup.css */; };
 		CD4469FE9C265ADF56312BF8 /* AddEditItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222F9B8FA271603FC0AE61E3 /* AddEditItemView.swift */; };
 		CEB05FFCF4DD8D6133842CDB /* KeyDerivation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81337DF13641B4E71EA16851 /* KeyDerivation.swift */; };
+		D637C5EC90A582B18D1761E1 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 5D2EFED168D2A3A1A63A00E6 /* Script.js */; };
 		D6A17DF67B12E64B31374079 /* PasswordGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3F1DF84D28924C9D7BEB0 /* PasswordGeneratorView.swift */; };
+		E62DFE9425261D712BF26878 /* icon-256.png in Resources */ = {isa = PBXBuildFile; fileRef = 777F519823B8110D0A978847 /* icon-256.png */; };
+		EC52D85A25C842523A74A8C3 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 9E812FB35EF54C7A986E1AC2 /* Main.html */; };
+		F0A6C0E7233C4954F1EF8D75 /* toolbar-icon.svg in Resources */ = {isa = PBXBuildFile; fileRef = 43417BEFAD93D437B4E57E07 /* toolbar-icon.svg */; };
 		F1891D8EE639291742814791 /* FreePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73591F7DE3C1F27564D01CC1 /* FreePassApp.swift */; };
+		F3378715C51E2EA12B381D50 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 50CD791D43E838B209408B45 /* Style.css */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4C8EF9C12F599EA60039D643 /* PBXContainerItemProxy */ = {
+		8E18FD407B67B585F781B60D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4E33A101CBDDB0A0A95BE1B2 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4C8EF9BE2F599EA60039D643;
+			remoteGlobalIDString = B13BF37F839A68E645E05520;
+			remoteInfo = "FreePassExtension Extension";
+		};
+		E7A837A4C715358AAE7EEAF4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E33A101CBDDB0A0A95BE1B2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B13BF37F839A68E645E05520;
 			remoteInfo = "FreePassExtension Extension";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4C8EF9D82F599EA60039D643 /* Embed Foundation Extensions */ = {
+		5366C88997B3F97D2C2F9D77 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				4C8EF9C02F599EA60039D643 /* FreePassExtension Extension.appex in Embed Foundation Extensions */,
+				BBAABB458915A2A841C23B2B /* FreePassExtension Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,70 +86,75 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07CD1C7AF65F21C8AD6EA262 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0E86C984AD044140FCC2F42E /* icon-64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-64.png"; sourceTree = "<group>"; };
+		0EFA0867C09F4DD5583F3F0C /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		113AB6E631C8FF44D1349287 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
+		11E7E60D940334FBEE355BEA /* icon-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-512.png"; sourceTree = "<group>"; };
+		16272795558EFD0A2644825D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
 		222F9B8FA271603FC0AE61E3 /* AddEditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditItemView.swift; sourceTree = "<group>"; };
 		27043D5869BEDC380E7AAE60 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		282E1054C1F6AE341AE844B4 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		2CA25616BF70F18D92E09A29 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = popup.js; sourceTree = "<group>"; };
 		3053FFA56CA6A321178A7B2F /* CryptoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoManager.swift; sourceTree = "<group>"; };
 		35AC8D21D9B403B23F091201 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		3652BEA87B497278DAA1B3DC /* FreePass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreePass.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3887CB3E26A3C430B2A553F6 /* FreePassExtension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreePassExtension.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		43417BEFAD93D437B4E57E07 /* toolbar-icon.svg */ = {isa = PBXFileReference; path = "toolbar-icon.svg"; sourceTree = "<group>"; };
 		459C590DC702E9F584B5F8BE /* BiometricAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuth.swift; sourceTree = "<group>"; };
-		4C8EF9A82F599EA60039D643 /* FreePassExtension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreePassExtension.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C8EF9BF2F599EA60039D643 /* FreePassExtension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "FreePassExtension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		471084832E6983EA758A6170 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
+		4D5392B4D6BD47EC5B015BC2 /* FreePassExtension_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FreePassExtension_Extension.entitlements; sourceTree = "<group>"; };
+		50CD791D43E838B209408B45 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
 		50F2C7501A86DAA0CB7E83B4 /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
+		522AA74D2B2117FC5EB8E512 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = popup.css; sourceTree = "<group>"; };
+		5D2EFED168D2A3A1A63A00E6 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
 		6B5F421A9E640075EA7AA259 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		6BAF55FD2C935C6A9BED8B90 /* icon-48.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-48.png"; sourceTree = "<group>"; };
+		6DCD9AF329B3E211C75207D7 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
 		73591F7DE3C1F27564D01CC1 /* FreePassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreePassApp.swift; sourceTree = "<group>"; };
+		7733A24ADC8158A0A679D262 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		777F519823B8110D0A978847 /* icon-256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-256.png"; sourceTree = "<group>"; };
 		7E31D60D0A4B15B988595DC6 /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
 		8081AD8186BDB4CC0A5A9EB0 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		81337DF13641B4E71EA16851 /* KeyDerivation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivation.swift; sourceTree = "<group>"; };
+		84C4D6C3171B2E2AE28975E1 /* icon-128.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-128.png"; sourceTree = "<group>"; };
+		868484180026D9DCF446AB77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		887EDFB70C2F5486EC4C34E9 /* FreePassExtension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "FreePassExtension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		91A9D1F089185CA366CC67B1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9593811AF11CE3332808FF1E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		9659AFCDCE4962F15561D37D /* messages.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = messages.json; sourceTree = "<group>"; };
 		99FDD91658AFA04515281EE8 /* VaultListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultListView.swift; sourceTree = "<group>"; };
 		B7543175A6296806120ECFC1 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		BC0E9469D4095BDDE7A37350 /* UnlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockView.swift; sourceTree = "<group>"; };
 		C1B3F1DF84D28924C9D7BEB0 /* PasswordGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordGeneratorView.swift; sourceTree = "<group>"; };
+		C563CACEDD4096BC6EA292D8 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+		CF1A8A35B42FC459EBEAA752 /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = popup.html; sourceTree = "<group>"; };
+		D4AE4A52FB90D7F3E55C3B74 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DA1CFC041BD48AD0D160BE95 /* VaultDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultDetailView.swift; sourceTree = "<group>"; };
+		DE5C5F1A4DD90D5BA3C6845C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F271024E187ED1672B74993D /* PasswordGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordGenerator.swift; sourceTree = "<group>"; };
+		FB20E9B041A48F16F451F199 /* icon-96.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-96.png"; sourceTree = "<group>"; };
 		FDD4BAB9F1ABB4144802FB8E /* VaultItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultItem.swift; sourceTree = "<group>"; };
-		C9E01C2BC3C349C68A9026F6 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4C8EF9DB2F599EA60039D643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 4C8EF9BE2F599EA60039D643 /* FreePassExtension Extension */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		4C8EF9A92F599EA60039D643 /* FreePassExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FreePassExtension; sourceTree = "<group>"; };
-		4C8EF9C32F599EA60039D643 /* FreePassExtension Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (4C8EF9DB2F599EA60039D643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (Resources/_locales, ); path = "FreePassExtension Extension"; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		4C8EF9A52F599EA60039D643 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4C8EF9BC2F599EA60039D643 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
 /* Begin PBXGroup section */
+		1994C840F10BFD8034B49C16 /* FreePassExtension Extension */ = {
+			isa = PBXGroup;
+			children = (
+				3CB3538CA5E1ADF031BB9FE6 /* Resources */,
+				4D5392B4D6BD47EC5B015BC2 /* FreePassExtension_Extension.entitlements */,
+				07CD1C7AF65F21C8AD6EA262 /* Info.plist */,
+				282E1054C1F6AE341AE844B4 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "FreePassExtension Extension";
+			sourceTree = "<group>";
+		};
 		1F6C11487112C31CCA0CC50D = {
 			isa = PBXGroup;
 			children = (
 				6EDF9C1E9DD84782159CB5CE /* FreePass */,
-				4C8EF9A92F599EA60039D643 /* FreePassExtension */,
-				4C8EF9C32F599EA60039D643 /* FreePassExtension Extension */,
+				6DAFC9BC5845ACF984F28F01 /* FreePassExtension */,
+				1994C840F10BFD8034B49C16 /* FreePassExtension Extension */,
 				F9B7AB4B9C9EB7E48BD33478 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,6 +165,35 @@
 				35AC8D21D9B403B23F091201 /* Theme.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		3CB3538CA5E1ADF031BB9FE6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				94B4117B9F01BA15775B84D8 /* _locales */,
+				5EC588846A43E03E76D235A1 /* images */,
+				471084832E6983EA758A6170 /* background.js */,
+				6DCD9AF329B3E211C75207D7 /* content.js */,
+				C563CACEDD4096BC6EA292D8 /* manifest.json */,
+				522AA74D2B2117FC5EB8E512 /* popup.css */,
+				CF1A8A35B42FC459EBEAA752 /* popup.html */,
+				2CA25616BF70F18D92E09A29 /* popup.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5EC588846A43E03E76D235A1 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				6BAF55FD2C935C6A9BED8B90 /* icon-48.png */,
+				0E86C984AD044140FCC2F42E /* icon-64.png */,
+				FB20E9B041A48F16F451F199 /* icon-96.png */,
+				84C4D6C3171B2E2AE28975E1 /* icon-128.png */,
+				777F519823B8110D0A978847 /* icon-256.png */,
+				11E7E60D940334FBEE355BEA /* icon-512.png */,
+				43417BEFAD93D437B4E57E07 /* toolbar-icon.svg */,
+			);
+			path = images;
 			sourceTree = "<group>";
 		};
 		5FE5A3A8AE1D576A1ED85589 /* Security */ = {
@@ -146,7 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				50F2C7501A86DAA0CB7E83B4 /* ClipboardManager.swift */,
-				C9E01C2BC3C349C68A9026F6 /* FaviconView.swift */,
+				113AB6E631C8FF44D1349287 /* FaviconView.swift */,
 				F271024E187ED1672B74993D /* PasswordGenerator.swift */,
 			);
 			path = Utilities;
@@ -160,11 +225,24 @@
 				7E31D60D0A4B15B988595DC6 /* MenuBarPopoverView.swift */,
 				6B5F421A9E640075EA7AA259 /* OnboardingView.swift */,
 				C1B3F1DF84D28924C9D7BEB0 /* PasswordGeneratorView.swift */,
+				DE5C5F1A4DD90D5BA3C6845C /* SettingsView.swift */,
 				BC0E9469D4095BDDE7A37350 /* UnlockView.swift */,
 				DA1CFC041BD48AD0D160BE95 /* VaultDetailView.swift */,
 				99FDD91658AFA04515281EE8 /* VaultListView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		6DAFC9BC5845ACF984F28F01 /* FreePassExtension */ = {
+			isa = PBXGroup;
+			children = (
+				D30E0E017D077B6B91EC45BC /* Resources */,
+				7733A24ADC8158A0A679D262 /* AppDelegate.swift */,
+				868484180026D9DCF446AB77 /* Assets.xcassets */,
+				FF92685B1C9B3599F8C26A2F /* Main.storyboard */,
+				9593811AF11CE3332808FF1E /* ViewController.swift */,
+			);
+			path = FreePassExtension;
 			sourceTree = "<group>";
 		};
 		6EDF9C1E9DD84782159CB5CE /* FreePass */ = {
@@ -181,6 +259,33 @@
 			path = FreePass;
 			sourceTree = "<group>";
 		};
+		94B4117B9F01BA15775B84D8 /* _locales */ = {
+			isa = PBXGroup;
+			children = (
+				B000965F00D8E90C68B8FA61 /* en */,
+			);
+			path = _locales;
+			sourceTree = "<group>";
+		};
+		B000965F00D8E90C68B8FA61 /* en */ = {
+			isa = PBXGroup;
+			children = (
+				9659AFCDCE4962F15561D37D /* messages.json */,
+			);
+			path = en;
+			sourceTree = "<group>";
+		};
+		D30E0E017D077B6B91EC45BC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0EFA0867C09F4DD5583F3F0C /* Icon.png */,
+				9E812FB35EF54C7A986E1AC2 /* Main.html */,
+				5D2EFED168D2A3A1A63A00E6 /* Script.js */,
+				50CD791D43E838B209408B45 /* Style.css */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		F6DB22CB22C6CFB9FF2B653A /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -194,8 +299,8 @@
 			isa = PBXGroup;
 			children = (
 				3652BEA87B497278DAA1B3DC /* FreePass.app */,
-				4C8EF9A82F599EA60039D643 /* FreePassExtension.app */,
-				4C8EF9BF2F599EA60039D643 /* FreePassExtension Extension.appex */,
+				887EDFB70C2F5486EC4C34E9 /* FreePassExtension Extension.appex */,
+				3887CB3E26A3C430B2A553F6 /* FreePassExtension.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -207,66 +312,57 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FFCD9DD9DA440857FDE6958C /* Build configuration list for PBXNativeTarget "FreePass" */;
 			buildPhases = (
-                                B1BCA9C0132434053401AD90 /* Sources */,
-                                506EC0C1E6873CD74A44A876 /* Resources */,
-                                4C8EF9D82F599EA60039D643 /* Embed Foundation Extensions */,
-                        );
-                        buildRules = (
-                        );
-                        dependencies = (
-                                4C8EF9C22F599EA60039D643 /* PBXTargetDependency */,
-                        );
-                        name = FreePass;
+				B1BCA9C0132434053401AD90 /* Sources */,
+				506EC0C1E6873CD74A44A876 /* Resources */,
+				5366C88997B3F97D2C2F9D77 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC78CB96CBD0FED8BC1ECE21 /* PBXTargetDependency */,
+			);
+			name = FreePass;
 			packageProductDependencies = (
 			);
 			productName = FreePass;
 			productReference = 3652BEA87B497278DAA1B3DC /* FreePass.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4C8EF9A72F599EA60039D643 /* FreePassExtension */ = {
+		8B09B264FCB193D16AD3C993 /* FreePassExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4C8EF9DD2F599EA60039D643 /* Build configuration list for PBXNativeTarget "FreePassExtension" */;
+			buildConfigurationList = 82465394A49FCC7FBF7F4E4A /* Build configuration list for PBXNativeTarget "FreePassExtension" */;
 			buildPhases = (
-				4C8EF9A42F599EA60039D643 /* Sources */,
-				4C8EF9A52F599EA60039D643 /* Frameworks */,
-				4C8EF9A62F599EA60039D643 /* Resources */,
-				4C8EF9D82F599EA60039D643 /* Embed Foundation Extensions */,
+				542BE004EBCECEBD3E6872F5 /* Sources */,
+				251440EE6C94D86622D55F52 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4C8EF9C22F599EA60039D643 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				4C8EF9A92F599EA60039D643 /* FreePassExtension */,
+				44BA2AB772365E310F0BC177 /* PBXTargetDependency */,
 			);
 			name = FreePassExtension;
 			packageProductDependencies = (
 			);
 			productName = FreePassExtension;
-			productReference = 4C8EF9A82F599EA60039D643 /* FreePassExtension.app */;
+			productReference = 3887CB3E26A3C430B2A553F6 /* FreePassExtension.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4C8EF9BE2F599EA60039D643 /* FreePassExtension Extension */ = {
+		B13BF37F839A68E645E05520 /* FreePassExtension Extension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4C8EF9DC2F599EA60039D643 /* Build configuration list for PBXNativeTarget "FreePassExtension Extension" */;
+			buildConfigurationList = 4FBD8B7525AFF26FF9330261 /* Build configuration list for PBXNativeTarget "FreePassExtension Extension" */;
 			buildPhases = (
-				4C8EF9BB2F599EA60039D643 /* Sources */,
-				4C8EF9BC2F599EA60039D643 /* Frameworks */,
-				4C8EF9BD2F599EA60039D643 /* Resources */,
+				6F1DF7EF2A28976ADECAEA0A /* Sources */,
+				0FB265E6AA01929E1E39863F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				4C8EF9C32F599EA60039D643 /* FreePassExtension Extension */,
-			);
 			name = "FreePassExtension Extension";
 			packageProductDependencies = (
 			);
 			productName = "FreePassExtension Extension";
-			productReference = 4C8EF9BF2F599EA60039D643 /* FreePassExtension Extension.appex */;
+			productReference = 887EDFB70C2F5486EC4C34E9 /* FreePassExtension Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -276,17 +372,19 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					4545DA48FB7E36624A8AA9B4 = {
+						DevelopmentTeam = L5774582ZK;
 						ProvisioningStyle = Automatic;
 					};
-					4C8EF9A72F599EA60039D643 = {
-						CreatedOnToolsVersion = 26.3;
+					8B09B264FCB193D16AD3C993 = {
+						DevelopmentTeam = L5774582ZK;
+						ProvisioningStyle = Automatic;
 					};
-					4C8EF9BE2F599EA60039D643 = {
-						CreatedOnToolsVersion = 26.3;
+					B13BF37F839A68E645E05520 = {
+						DevelopmentTeam = L5774582ZK;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -300,28 +398,49 @@
 			);
 			mainGroup = 1F6C11487112C31CCA0CC50D;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				4545DA48FB7E36624A8AA9B4 /* FreePass */,
-				4C8EF9A72F599EA60039D643 /* FreePassExtension */,
-				4C8EF9BE2F599EA60039D643 /* FreePassExtension Extension */,
+				8B09B264FCB193D16AD3C993 /* FreePassExtension */,
+				B13BF37F839A68E645E05520 /* FreePassExtension Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		4C8EF9A62F599EA60039D643 /* Resources */ = {
+		0FB265E6AA01929E1E39863F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A6D7D8B4EAC069DDEDBC3DE /* background.js in Resources */,
+				882914D6DA3093DFFB07A0F6 /* content.js in Resources */,
+				BC8C398729F235BAD1978D01 /* icon-128.png in Resources */,
+				E62DFE9425261D712BF26878 /* icon-256.png in Resources */,
+				71B8DEA0AD7DAF4D71A753FE /* icon-48.png in Resources */,
+				8AAB0A3156B07BD39DD1D618 /* icon-512.png in Resources */,
+				6CC4C5183117ECE0E508CFDB /* icon-64.png in Resources */,
+				3F91F5469AE2EB0D5061D0B9 /* icon-96.png in Resources */,
+				1C4BF140E659E29A1076894D /* manifest.json in Resources */,
+				392AE5C7008CFA0941BC6872 /* messages.json in Resources */,
+				C156243841F883564AE5D52B /* popup.css in Resources */,
+				9C08550A1411B3ABEC3C1D34 /* popup.html in Resources */,
+				9412C526BA662E6D0959A9F2 /* popup.js in Resources */,
+				F0A6C0E7233C4954F1EF8D75 /* toolbar-icon.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4C8EF9BD2F599EA60039D643 /* Resources */ = {
+		251440EE6C94D86622D55F52 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				585CC4FDFAE0C2E67A1C22DE /* Assets.xcassets in Resources */,
+				A89B071FB29B84DAF5E9B97B /* Icon.png in Resources */,
+				EC52D85A25C842523A74A8C3 /* Main.html in Resources */,
+				A7FCF52BCCD1AA64EAF45F16 /* Main.storyboard in Resources */,
+				D637C5EC90A582B18D1761E1 /* Script.js in Resources */,
+				F3378715C51E2EA12B381D50 /* Style.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,17 +455,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4C8EF9A42F599EA60039D643 /* Sources */ = {
+		542BE004EBCECEBD3E6872F5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5BDB08E63A6DF33A66A25F0 /* AppDelegate.swift in Sources */,
+				257FAC795ECF6B175EE44CD4 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4C8EF9BB2F599EA60039D643 /* Sources */ = {
+		6F1DF7EF2A28976ADECAEA0A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C221CAAD08BE0399991C95F /* SafariWebExtensionHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,14 +482,15 @@
 				1060BB71A65F2381EAEF375D /* ClipboardManager.swift in Sources */,
 				96DC209BFB190C399F601903 /* ContentView.swift in Sources */,
 				758173F0DCB305154570381F /* CryptoManager.swift in Sources */,
+				9FDE49FD888221D444E521FD /* FaviconView.swift in Sources */,
 				F1891D8EE639291742814791 /* FreePassApp.swift in Sources */,
 				CEB05FFCF4DD8D6133842CDB /* KeyDerivation.swift in Sources */,
 				26991DAA53F0C097C1ED2A90 /* KeychainManager.swift in Sources */,
 				4B7510460808238363391B8C /* MenuBarPopoverView.swift in Sources */,
 				B840EC38E3856E4D84B79E8C /* OnboardingView.swift in Sources */,
 				62445987474E23B20189349C /* PasswordGenerator.swift in Sources */,
-				EA36BDA7FF6244F2A5BCD215 /* FaviconView.swift in Sources */,
 				D6A17DF67B12E64B31374079 /* PasswordGeneratorView.swift in Sources */,
+				168429805D1B5CAFD8D5F2BD /* SettingsView.swift in Sources */,
 				AD65DB6E1428BEB16BDEF082 /* Theme.swift in Sources */,
 				2388CBE4763F16B2103CF044 /* UnlockView.swift in Sources */,
 				037E8315F2A2CFD2CACA04E7 /* VaultDetailView.swift in Sources */,
@@ -379,12 +502,36 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4C8EF9C22F599EA60039D643 /* PBXTargetDependency */ = {
+		44BA2AB772365E310F0BC177 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4C8EF9BE2F599EA60039D643 /* FreePassExtension Extension */;
-			targetProxy = 4C8EF9C12F599EA60039D643 /* PBXContainerItemProxy */;
+			target = B13BF37F839A68E645E05520 /* FreePassExtension Extension */;
+			targetProxy = 8E18FD407B67B585F781B60D /* PBXContainerItemProxy */;
+		};
+		EC78CB96CBD0FED8BC1ECE21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B13BF37F839A68E645E05520 /* FreePassExtension Extension */;
+			targetProxy = E7A837A4C715358AAE7EEAF4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9E812FB35EF54C7A986E1AC2 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				16272795558EFD0A2644825D /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		FF92685B1C9B3599F8C26A2F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4AE4A52FB90D7F3E55C3B74 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0EE1F6AEF31C5390538B5D14 /* Debug */ = {
@@ -462,7 +609,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5774582ZK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FreePass;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -537,123 +683,13 @@
 			};
 			name = Release;
 		};
-		4C8EF9D62F599EA60039D643 /* Debug */ = {
+		8D86C38B4839D292491E5AA8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "FreePassExtension Extension/FreePassExtension_Extension.entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5774582ZK;
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = FreePassExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0.0;
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-					"-framework",
-					WebKit,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		4C8EF9D72F599EA60039D643 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5774582ZK;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = FreePassExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0.0;
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-					"-framework",
-					WebKit,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		4C8EF9D92F599EA60039D643 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5774582ZK;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FreePassExtension Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "FreePassExtension Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -662,64 +698,18 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
-		};
-		4C8EF9DA2F599EA60039D643 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5774582ZK;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "FreePassExtension Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "FreePassExtension Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@executable_path/../../../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0.0;
-				OTHER_LDFLAGS = (
-					"-framework",
-					SafariServices,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.Extension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
 		};
 		94D3C2707214B243A56F0F8F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -729,7 +719,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L5774582ZK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FreePass;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -741,6 +730,92 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app;
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B127F411147B34A176B7755C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = FreePassExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C4F323CDBD50E3C1E6248A8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = FreePassExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F051BE940B2355692E1CC0BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "FreePassExtension Extension/FreePassExtension_Extension.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = "FreePassExtension Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreePassExtension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.freepass.app.FreePassExtension.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -756,20 +831,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4C8EF9DC2F599EA60039D643 /* Build configuration list for PBXNativeTarget "FreePassExtension Extension" */ = {
+		4FBD8B7525AFF26FF9330261 /* Build configuration list for PBXNativeTarget "FreePassExtension Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4C8EF9D92F599EA60039D643 /* Debug */,
-				4C8EF9DA2F599EA60039D643 /* Release */,
+				8D86C38B4839D292491E5AA8 /* Debug */,
+				F051BE940B2355692E1CC0BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4C8EF9DD2F599EA60039D643 /* Build configuration list for PBXNativeTarget "FreePassExtension" */ = {
+		82465394A49FCC7FBF7F4E4A /* Build configuration list for PBXNativeTarget "FreePassExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4C8EF9D62F599EA60039D643 /* Debug */,
-				4C8EF9D72F599EA60039D643 /* Release */,
+				B127F411147B34A176B7755C /* Debug */,
+				C4F323CDBD50E3C1E6248A8C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

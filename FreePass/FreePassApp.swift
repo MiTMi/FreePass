@@ -27,11 +27,19 @@ struct FreePassApp: App {
         .defaultSize(width: 900, height: 600)
 
         // Menu bar extra
-        MenuBarExtra("FreePass", systemImage: "lock.shield.fill") {
+        MenuBarExtra("FreePass", systemImage: "lock.shield.fill", isInserted: Bindable(appState).showMenuBarIcon) {
             MenuBarPopoverView()
                 .environment(appState)
                 .modelContainer(container)
         }
         .menuBarExtraStyle(.window)
+
+        #if os(macOS)
+        Settings {
+            SettingsView()
+                .environment(appState)
+                .modelContainer(container)
+        }
+        #endif
     }
 }
