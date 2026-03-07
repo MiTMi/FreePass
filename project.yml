@@ -76,6 +76,13 @@ targets:
     platform: macOS
     sources:
       - path: FreePassExtension Extension
+        excludes:
+          - Resources/images
+          - Resources/_locales
+      - path: FreePassExtension Extension/Resources/images
+        type: folder
+      - path: FreePassExtension Extension/Resources/_locales
+        type: folder
     info:
       path: "FreePassExtension Extension/Info.plist"
       properties:
