@@ -5,12 +5,17 @@ import AppKit
 struct VaultDetailView: View {
     @Environment(AppState.self) private var appState
     @State private var showPassword = false
+    @State private var revealedFields: Set<String> = []
     @State private var showNotes = false
     @State private var isEditing = false
     @State private var copiedField: String?
 
     let item: VaultItem
     var onDelete: (() -> Void)?
+
+    private var cat: VaultCategory {
+        VaultCategory(rawValue: item.category) ?? .login
+    }
 
     private var decryptedPassword: String {
         guard let key = appState.derivedKey else { return "••••••••" }
@@ -37,17 +42,19 @@ struct VaultDetailView: View {
         return item.decryptedCardCVV(using: key)
     }
 
+    private var decryptedFields: [String: String] {
+        guard let key = appState.derivedKey else { return [:] }
+        return item.decryptedFields(using: key) ?? [:]
+    }
+
     var body: some View {
         ZStack {
             Color.fpDetail.ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 20) {
                     header
-                    let cat = VaultCategory(rawValue: item.category) ?? .login
-                    if cat == .login || cat == .creditCard {
-                        detailsSection
-                    }
-                    if item.encryptedNotes != nil {
+                    detailsSection
+                    if decryptedNotes != nil || cat == .secureNote {
                         notesSection
                     }
                     metadataSection
@@ -68,7 +75,7 @@ struct VaultDetailView: View {
         HStack(spacing: 16) {
             FaviconView(
                 urlString: item.url,
-                category: VaultCategory(rawValue: item.category) ?? .login,
+                category: cat,
                 size: 56
             )
 
@@ -99,9 +106,7 @@ struct VaultDetailView: View {
             .buttonStyle(.plain)
             .help("Toggle favorite")
 
-            Button {
-                isEditing = true
-            } label: {
+            Button { isEditing = true } label: {
                 Image(systemName: "pencil")
                     .foregroundColor(.fpAccentBlue)
             }
@@ -110,99 +115,123 @@ struct VaultDetailView: View {
         }
     }
 
-    // MARK: - Credentials Section
+    // MARK: - Details Section
 
+    @ViewBuilder
     private var detailsSection: some View {
-        let cat = VaultCategory(rawValue: item.category) ?? .login
-        return VStack(spacing: 0) {
-            if cat == .login {
-                if !item.url.isEmpty {
-                    detailRow(label: "Website", value: item.url, icon: "globe", copiable: true)
-                    // Open & Fill action
-                    Button {
-                        openAndFill()
-                    } label: {
-                        HStack {
-                            Image(systemName: "safari.fill")
-                            Text(copiedField == "open_fill" ? "Filling..." : "Open & Fill")
-                        }
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(copiedField == "open_fill" ? .white : .fpAccentPurple)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(copiedField == "open_fill" ? Color.fpSuccess : Color.fpAccentPurple.opacity(0.15))
-                        .cornerRadius(8)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
+        switch cat {
+        case .login:
+            loginSection
+        case .creditCard:
+            creditCardSection
+        case .secureNote:
+            EmptyView()  // secureNote goes straight to notesSection
+        default:
+            genericSection
+        }
+    }
 
-                    Divider().background(Color.fpSurfaceBorder)
+    // MARK: - Login
+
+    private var loginSection: some View {
+        VStack(spacing: 0) {
+            if !item.url.isEmpty {
+                detailRow(label: "Website", value: item.url, icon: "globe", isSecure: false, copiable: true)
+                Button { openAndFill() } label: {
+                    HStack {
+                        Image(systemName: "safari.fill")
+                        Text(copiedField == "open_fill" ? "Filling..." : "Open & Fill")
+                    }
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(copiedField == "open_fill" ? .white : .fpAccentPurple)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(copiedField == "open_fill" ? Color.fpSuccess : Color.fpAccentPurple.opacity(0.15))
+                    .cornerRadius(8)
                 }
-
-                detailRow(label: "Username", value: item.username, icon: "person", copiable: true)
-                Divider().background(Color.fpSurfaceBorder)
-
-                // Password row (special handling for reveal toggle)
-                HStack(alignment: .top) {
-                    Image(systemName: "key.fill")
-                        .foregroundColor(.fpAccentPurple)
-                        .frame(width: 20)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Password")
-                            .font(.caption)
-                            .foregroundColor(.fpTextSecondary)
-
-                        HStack {
-                            if showPassword {
-                                Text(decryptedPassword)
-                                    .font(.system(size: 14, design: .monospaced))
-                                    .foregroundColor(.fpTextPrimary)
-                                    .textSelection(.enabled)
-                            } else {
-                                Text("••••••••••••")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.fpTextSecondary)
-                            }
-                        }
-                    }
-
-                    Spacer()
-
-                    HStack(spacing: 8) {
-                        Button {
-                            showPassword.toggle()
-                        } label: {
-                            Image(systemName: showPassword ? "eye.slash" : "eye")
-                                .foregroundColor(.fpTextSecondary)
-                        }
-                        .buttonStyle(.plain)
-                        .help(showPassword ? "Hide password" : "Show password")
-
-                        copyButton(value: decryptedPassword, field: "password")
-                    }
-                }
-                .padding(.vertical, 12)
+                .buttonStyle(.plain)
                 .padding(.horizontal, 16)
-            } else if cat == .creditCard {
-                if let num = decryptedCardNumber, !num.isEmpty {
-                    detailRow(label: "Card Number", value: num, icon: "creditcard", copiable: true)
+                .padding(.bottom, 12)
+                Divider().background(Color.fpSurfaceBorder)
+            }
+            detailRow(label: "Username", value: item.username, icon: "person", isSecure: false, copiable: true)
+            Divider().background(Color.fpSurfaceBorder)
+            secureDetailRow(label: "Password", value: decryptedPassword, fieldKey: "password", icon: "key.fill", showGenerator: false)
+        }
+        .fpCard()
+    }
+
+    // MARK: - Credit Card
+
+    private var creditCardSection: some View {
+        VStack(spacing: 0) {
+            if let num = decryptedCardNumber, !num.isEmpty {
+                secureDetailRow(label: "Card Number", value: num, fieldKey: "cardNumber", icon: "creditcard", showGenerator: false)
+                Divider().background(Color.fpSurfaceBorder)
+            }
+            if let exp = decryptedCardExpiration, !exp.isEmpty {
+                detailRow(label: "Expiration", value: exp, icon: "calendar", isSecure: false, copiable: true)
+                Divider().background(Color.fpSurfaceBorder)
+            }
+            if let cvv = decryptedCardCVV, !cvv.isEmpty {
+                secureDetailRow(label: "CVV", value: cvv, fieldKey: "cvv", icon: "lock.fill", showGenerator: false)
+            }
+            // Extra fields (cardholder, bank, card type)
+            ForEach(Array(cat.fieldSpecs.enumerated()), id: \.element.id) { index, spec in
+                if let value = decryptedFields[spec.id], !value.isEmpty {
                     Divider().background(Color.fpSurfaceBorder)
-                }
-                if let exp = decryptedCardExpiration, !exp.isEmpty {
-                    detailRow(label: "Expiration", value: exp, icon: "calendar", copiable: true)
-                    Divider().background(Color.fpSurfaceBorder)
-                }
-                if let cvv = decryptedCardCVV, !cvv.isEmpty {
-                    detailRow(label: "CVV", value: cvv, icon: "lock.fill", copiable: true)
+                    detailRow(label: spec.label, value: value, icon: spec.sfSymbol, isSecure: spec.isSecure, copiable: true)
                 }
             }
         }
         .fpCard()
     }
 
-    // MARK: - Notes Section
+    // MARK: - Generic (all other categories)
+
+    private var genericSection: some View {
+        VStack(spacing: 0) {
+            let specs = cat.fieldSpecs
+            let filledSpecs = specs.filter { spec in
+                !(decryptedFields[spec.id] ?? "").isEmpty
+            }
+
+            if filledSpecs.isEmpty {
+                Text("No details saved yet. Tap edit to add information.")
+                    .font(.system(size: 13))
+                    .foregroundColor(.fpTextTertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+            } else {
+                ForEach(Array(filledSpecs.enumerated()), id: \.element.id) { index, spec in
+                    let value = decryptedFields[spec.id] ?? ""
+                    if index > 0 {
+                        Divider().background(Color.fpSurfaceBorder)
+                    }
+                    if spec.isSecure {
+                        secureDetailRow(
+                            label: spec.label,
+                            value: value,
+                            fieldKey: spec.id,
+                            icon: spec.sfSymbol,
+                            showGenerator: false
+                        )
+                    } else {
+                        detailRow(
+                            label: spec.label,
+                            value: value,
+                            icon: spec.sfSymbol,
+                            isSecure: false,
+                            copiable: true
+                        )
+                    }
+                }
+            }
+        }
+        .fpCard()
+    }
+
+    // MARK: - Notes
 
     private var notesSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -210,13 +239,11 @@ struct VaultDetailView: View {
                 Image(systemName: "note.text")
                     .foregroundColor(.fpAccentPurple)
                     .frame(width: 20)
-                Text("Notes")
+                Text(cat == .secureNote ? "Note Content" : "Notes")
                     .font(.caption)
                     .foregroundColor(.fpTextSecondary)
                 Spacer()
-                Button {
-                    showNotes.toggle()
-                } label: {
+                Button { showNotes.toggle() } label: {
                     Image(systemName: showNotes ? "eye.slash" : "eye")
                         .foregroundColor(.fpTextSecondary)
                 }
@@ -230,7 +257,7 @@ struct VaultDetailView: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
-                Text("Click the eye icon to reveal notes")
+                Text("Click the eye icon to reveal \(cat == .secureNote ? "note" : "notes")")
                     .font(.system(size: 12))
                     .foregroundColor(.fpTextTertiary)
             }
@@ -243,40 +270,30 @@ struct VaultDetailView: View {
     private var metadataSection: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Created")
-                    .font(.caption)
-                    .foregroundColor(.fpTextSecondary)
+                Text("Created").font(.caption).foregroundColor(.fpTextSecondary)
                 Spacer()
                 Text(item.createdAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption)
-                    .foregroundColor(.fpTextTertiary)
+                    .font(.caption).foregroundColor(.fpTextTertiary)
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
+            .padding(.vertical, 8).padding(.horizontal, 16)
 
             Divider().background(Color.fpSurfaceBorder)
 
             HStack {
-                Text("Last Modified")
-                    .font(.caption)
-                    .foregroundColor(.fpTextSecondary)
+                Text("Last Modified").font(.caption).foregroundColor(.fpTextSecondary)
                 Spacer()
                 Text(item.updatedAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption)
-                    .foregroundColor(.fpTextTertiary)
+                    .font(.caption).foregroundColor(.fpTextTertiary)
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
+            .padding(.vertical, 8).padding(.horizontal, 16)
         }
         .fpCard()
     }
 
-    // MARK: - Danger Zone
+    // MARK: - Danger
 
     private var dangerSection: some View {
-        Button(role: .destructive) {
-            onDelete?()
-        } label: {
+        Button(role: .destructive) { onDelete?() } label: {
             HStack {
                 Image(systemName: "trash")
                 Text("Delete Item")
@@ -290,28 +307,69 @@ struct VaultDetailView: View {
         .fpCard()
     }
 
-    // MARK: - Helpers
+    // MARK: - Row Helpers
 
-    private func detailRow(label: String, value: String, icon: String, copiable: Bool) -> some View {
+    private func detailRow(label: String, value: String, icon: String, isSecure: Bool, copiable: Bool) -> some View {
         HStack(alignment: .top) {
             Image(systemName: icon)
                 .foregroundColor(.fpAccentPurple)
                 .frame(width: 20)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(label)
-                    .font(.caption)
-                    .foregroundColor(.fpTextSecondary)
+                Text(label).font(.caption).foregroundColor(.fpTextSecondary)
                 Text(value)
                     .font(.system(size: 14))
                     .foregroundColor(.fpTextPrimary)
                     .textSelection(.enabled)
+                    .lineLimit(isSecure ? 1 : nil)
             }
 
             Spacer()
 
             if copiable {
                 copyButton(value: value, field: label.lowercased())
+            }
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+    }
+
+    private func secureDetailRow(label: String, value: String, fieldKey: String, icon: String, showGenerator: Bool) -> some View {
+        let isRevealed = revealedFields.contains(fieldKey)
+
+        return HStack(alignment: .top) {
+            Image(systemName: icon)
+                .foregroundColor(.fpAccentPurple)
+                .frame(width: 20)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label).font(.caption).foregroundColor(.fpTextSecondary)
+                if isRevealed {
+                    Text(value)
+                        .font(.system(size: 14, design: .monospaced))
+                        .foregroundColor(.fpTextPrimary)
+                        .textSelection(.enabled)
+                } else {
+                    Text("••••••••••••")
+                        .font(.system(size: 14))
+                        .foregroundColor(.fpTextSecondary)
+                }
+            }
+
+            Spacer()
+
+            HStack(spacing: 8) {
+                Button {
+                    if isRevealed { revealedFields.remove(fieldKey) }
+                    else { revealedFields.insert(fieldKey) }
+                } label: {
+                    Image(systemName: isRevealed ? "eye.slash" : "eye")
+                        .foregroundColor(.fpTextSecondary)
+                }
+                .buttonStyle(.plain)
+                .help(isRevealed ? "Hide" : "Show")
+
+                copyButton(value: value, field: fieldKey)
             }
         }
         .padding(.vertical, 12)
@@ -334,25 +392,24 @@ struct VaultDetailView: View {
         .help("Copy \(field)")
     }
 
+    // MARK: - Open & Fill
+
     private func openAndFill() {
         let urlString = item.url.lowercased().hasPrefix("http") ? item.url : "https://\(item.url)"
-        if let url = URL(string: urlString) {
-            
+        guard let url = URL(string: urlString) else { return }
+
+        withAnimation(.easeOut(duration: 0.2)) { copiedField = "open_fill" }
+
+        let cleanDomain = item.url.lowercased()
+            .replacingOccurrences(of: "https://", with: "")
+            .replacingOccurrences(of: "http://", with: "")
+            .components(separatedBy: "/").first ?? item.url
+        ExtensionServer.shared.pendingAutoFillDomain = cleanDomain
+        NSWorkspace.shared.open(url)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             withAnimation(.easeOut(duration: 0.2)) {
-                copiedField = "open_fill"
-            }
-            
-            // Wait for Safari extension to wake up and ping localhost for this specific domain
-            let cleanDomain = item.url.lowercased().replacingOccurrences(of: "https://", with: "").replacingOccurrences(of: "http://", with: "").components(separatedBy: "/").first ?? item.url
-            ExtensionServer.shared.pendingAutoFillDomain = cleanDomain
-            
-            // Open the browser directly
-            NSWorkspace.shared.open(url)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                withAnimation(.easeOut(duration: 0.2)) {
-                    if copiedField == "open_fill" { copiedField = nil }
-                }
+                if copiedField == "open_fill" { copiedField = nil }
             }
         }
     }
