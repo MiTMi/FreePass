@@ -38,23 +38,25 @@ struct VaultDetailView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                header
-                let cat = VaultCategory(rawValue: item.category) ?? .login
-                if cat == .login || cat == .creditCard {
-                    detailsSection
+        ZStack {
+            Color.fpDetail.ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: 20) {
+                    header
+                    let cat = VaultCategory(rawValue: item.category) ?? .login
+                    if cat == .login || cat == .creditCard {
+                        detailsSection
+                    }
+                    if item.encryptedNotes != nil {
+                        notesSection
+                    }
+                    metadataSection
+                    dangerSection
                 }
-                if item.encryptedNotes != nil {
-                    notesSection
-                }
-                metadataSection
-                dangerSection
+                .padding(24)
             }
-            .padding(24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.fpBackground)
         .sheet(isPresented: $isEditing) {
             AddEditItemView(mode: .edit(item))
         }

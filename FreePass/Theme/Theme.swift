@@ -1,13 +1,50 @@
+import AppKit
 import SwiftUI
 
 // MARK: - Color Palette
 
 extension Color {
+    // Helper for generating dynamic colors that respond instantly to Light/Dark mode
+    static func dynamic(light: NSColor, dark: NSColor) -> Color {
+        return Color(nsColor: NSColor(name: nil, dynamicProvider: { appearance in
+            if appearance.name == .darkAqua || appearance.name == .vibrantDark || appearance.name == .accessibilityHighContrastDarkAqua || appearance.name == .accessibilityHighContrastVibrantDark {
+                return dark
+            } else {
+                return light
+            }
+        }))
+    }
+    
     // Backgrounds
-    static let fpBackground = Color(nsColor: NSColor(red: 0.07, green: 0.07, blue: 0.09, alpha: 1))
-    static let fpSurface = Color(nsColor: NSColor(red: 0.12, green: 0.12, blue: 0.15, alpha: 1))
-    static let fpSurfaceHover = Color(nsColor: NSColor(red: 0.16, green: 0.16, blue: 0.20, alpha: 1))
-    static let fpSurfaceBorder = Color(white: 0.2)
+    static let fpBackground = dynamic(
+        light: NSColor(red: 244.0/255.0, green: 245.0/255.0, blue: 247.0/255.0, alpha: 1.0),
+        dark: NSColor(red: 38.0/255.0, green: 38.0/255.0, blue: 38.0/255.0, alpha: 1.0)
+    )
+    static let fpSidebar = dynamic(
+        light: NSColor(red: 244.0/255.0, green: 245.0/255.0, blue: 247.0/255.0, alpha: 1.0),
+        dark: NSColor(red: 43.0/255.0, green: 43.0/255.0, blue: 48.0/255.0, alpha: 1.0)
+    )
+    static let fpList = dynamic(
+        light: NSColor.white,
+        dark: NSColor(red: 43.0/255.0, green: 43.0/255.0, blue: 43.0/255.0, alpha: 1.0)
+    )
+    static let fpDetail = dynamic(
+        light: NSColor.white,
+        dark: NSColor(red: 43.0/255.0, green: 43.0/255.0, blue: 43.0/255.0, alpha: 1.0)
+    )
+    static let fpSurface = dynamic(
+        light: NSColor.white,
+        dark: NSColor(red: 50.0/255.0, green: 50.0/255.0, blue: 50.0/255.0, alpha: 1.0)
+    )
+    static let fpSurfaceHover = dynamic(
+        light: NSColor(white: 0.95, alpha: 1.0),
+        dark: NSColor(red: 65.0/255.0, green: 65.0/255.0, blue: 65.0/255.0, alpha: 1.0)
+    )
+    static let fpSurfaceBorder = dynamic(
+        light: NSColor(white: 0.85, alpha: 1.0),
+        dark: NSColor(white: 0.2, alpha: 1.0)
+    )
+    static let fpSelection = Color(red: 0.05, green: 0.38, blue: 0.95)
 
     // Accent
     static let fpAccentPurple = Color(red: 0.45, green: 0.30, blue: 1.0)
@@ -15,9 +52,18 @@ extension Color {
     static let fpAccentCyan = Color(red: 0.20, green: 0.75, blue: 0.95)
 
     // Text
-    static let fpTextPrimary = Color.white
-    static let fpTextSecondary = Color(white: 0.55)
-    static let fpTextTertiary = Color(white: 0.35)
+    static let fpTextPrimary = dynamic(
+        light: NSColor.black,
+        dark: NSColor.white
+    )
+    static let fpTextSecondary = dynamic(
+        light: NSColor.systemGray,
+        dark: NSColor(white: 0.55, alpha: 1.0)
+    )
+    static let fpTextTertiary = dynamic(
+        light: NSColor.lightGray,
+        dark: NSColor(white: 0.35, alpha: 1.0)
+    )
 
     // Semantic
     static let fpDanger = Color(red: 1.0, green: 0.35, blue: 0.40)

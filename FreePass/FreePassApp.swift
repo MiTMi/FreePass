@@ -25,6 +25,7 @@ struct FreePassApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 900, height: 600)
+        .defaultAppStorage(UserDefaults.standard)
 
         // Menu bar extra
         MenuBarExtra("FreePass", systemImage: "lock.shield.fill", isInserted: Bindable(appState).showMenuBarIcon) {

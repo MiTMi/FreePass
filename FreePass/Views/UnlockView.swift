@@ -92,7 +92,7 @@ struct UnlockView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
-                    .background(Color(white: 0.15))
+                    .background(Color.fpSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)

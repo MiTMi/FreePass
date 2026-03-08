@@ -21,7 +21,6 @@ struct VaultListView: View {
     @State private var showingCategorySelection = false
     @State private var categoryToAdd: VaultCategory = .login
     @State private var showingGenerator = false
-    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     private var filteredItems: [VaultItem] {
         var result = allItems
@@ -74,12 +73,15 @@ struct VaultListView: View {
     }
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+        HSplitView {
             sidebar
-        } content: {
+                .frame(minWidth: 200, idealWidth: 240, maxWidth: 300)
+                
             itemList
-        } detail: {
+                .frame(minWidth: 240, idealWidth: 280, maxWidth: 350)
+                
             detailPane
+                .frame(minWidth: 300, maxWidth: .infinity)
         }
         .searchable(text: $searchText, placement: .toolbar, prompt: "Search vault...")
         .toolbar {
@@ -128,9 +130,11 @@ struct VaultListView: View {
     // MARK: - Sidebar
 
     private var sidebar: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                // User Profile Header
+        ZStack {
+            Color.fpSidebar.ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // User Profile Header
                 HStack(spacing: 12) {
                     ZStack {
                         Circle()
@@ -141,7 +145,7 @@ struct VaultListView: View {
                             .font(.system(size: 16))
                     }
                     Text("michael.tubul")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.fpTextPrimary)
                     Spacer()
                     Image(systemName: "chevron.down")
@@ -220,18 +224,19 @@ struct VaultListView: View {
                 }
                 .padding(.bottom, 16)
                 
-                Spacer(minLength: 40)
+                    Spacer(minLength: 40)
+                }
             }
         }
-        .background(Color(white: 0.15)) // mimicking dark gray generic sidebar
-        .frame(minWidth: 220, idealWidth: 240, maxWidth: 280)
     }
 
     // MARK: - Item List
 
     private var itemList: some View {
-        Group {
-            if filteredItems.isEmpty {
+        ZStack {
+            Color.fpList.ignoresSafeArea()
+            Group {
+                if filteredItems.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: searchText.isEmpty ? "tray" : "magnifyingglass")
                         .font(.system(size: 36))
@@ -297,33 +302,36 @@ struct VaultListView: View {
                     .padding(8)
                 }
                 .animation(.default, value: filteredItems.count)
+                }
             }
         }
-        .frame(minWidth: 260)
     }
 
     // MARK: - Detail Pane
 
     private var detailPane: some View {
-        Group {
-            if let item = selectedItem {
-                VaultDetailView(item: item, onDelete: {
-                    selectedItem = nil
-                    deleteItem(item)
-                })
-            } else {
-                VStack(spacing: 12) {
-                    Image("AppLogo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 64, height: 64)
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 3)
-                    Text("Select an item to view details")
-                        .font(.title3)
-                        .foregroundColor(.fpTextSecondary)
+        ZStack {
+            Color.fpDetail.ignoresSafeArea()
+            Group {
+                if let item = selectedItem {
+                    VaultDetailView(item: item, onDelete: {
+                        selectedItem = nil
+                        deleteItem(item)
+                    })
+                } else {
+                    VStack(spacing: 12) {
+                        Image("AppLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 64, height: 64)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 3)
+                        Text("Select an item to view details")
+                            .font(.title3)
+                            .foregroundColor(.fpTextSecondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
@@ -355,7 +363,7 @@ private struct SectionHeader: View {
                 .frame(width: 16)
             
             Text(title)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 11, weight: .bold))
                 .foregroundColor(.fpTextSecondary)
                 .padding(.leading, 2)
             
@@ -389,30 +397,30 @@ private struct SidebarRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 14))
-                .foregroundColor(iconColor)
-                .frame(width: 20)
+                .font(.system(size: 16))
+                .foregroundColor(isSelected ? .white : iconColor)
+                .frame(width: 22)
             
             Text(title)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.white)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(isSelected ? .white : .fpTextPrimary)
             
             Spacer()
             
             if let c = count, c > 0 {
                 Text("\(c)")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color(white: 0.3))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(isSelected ? .fpSelection : .white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(isSelected ? Color.white : Color(white: 0.3))
                     .clipShape(Capsule())
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
         .padding(.horizontal, 12)
-        .background(isSelected ? Color.blue.opacity(isStaticPrimary ? 0.4 : 0.0) : (isHovering ? Color(white: 0.2) : Color.clear))
-        .cornerRadius(6)
+        .background(isSelected ? Color.fpSelection : (isHovering ? Color(white: 0.2) : Color.clear))
+        .cornerRadius(8)
         .padding(.horizontal, 10)
         .contentShape(Rectangle())
         .onHover { h in isHovering = h }
@@ -432,14 +440,14 @@ struct VaultItemRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             // Category icon / Favicon
-            FaviconView(urlString: item.category == VaultCategory.login.rawValue ? item.url : "", fallbackIcon: categoryIcon, size: 36)
+            FaviconView(urlString: item.category == VaultCategory.login.rawValue ? item.url : "", fallbackIcon: categoryIcon, size: 40)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(item.title)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(isSelected ? .white : .fpTextPrimary)
                         .lineLimit(1)
                     if item.isFavorite {
@@ -449,18 +457,18 @@ struct VaultItemRow: View {
                     }
                 }
                 Text(item.username)
-                    .font(.system(size: 11))
+                    .font(.system(size: 13))
                     .foregroundColor(isSelected ? .white.opacity(0.8) : .fpTextSecondary)
                     .lineLimit(1)
             }
 
             Spacer()
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
-        .frame(minHeight: 44)
-        .background(isSelected ? Color.blue : (isHovering ? Color.fpSurfaceHover : Color.clear))
-        .cornerRadius(6)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
+        .frame(minHeight: 56)
+        .background(isSelected ? Color.fpSelection : (isHovering ? Color.fpSurfaceHover : Color.clear))
+        .cornerRadius(8)
         .contentShape(Rectangle())
         .onHover { hover in isHovering = hover }
     }
