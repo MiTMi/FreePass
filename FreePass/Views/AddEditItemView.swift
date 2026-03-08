@@ -281,7 +281,7 @@ struct AddEditItemView: View {
                 }
             }
             Spacer()
-            Button { withAnimation { customFields.remove(at: i) } } label: {
+            Button { let id = customFields[i].id; withAnimation { customFields.removeAll { $0.id == id } } } label: {
                 Image(systemName: "minus.circle.fill").font(.system(size: 17)).foregroundColor(red.opacity(0.85))
             }.buttonStyle(.plain)
         }
