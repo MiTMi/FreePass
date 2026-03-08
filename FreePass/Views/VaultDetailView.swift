@@ -67,8 +67,8 @@ struct VaultDetailView: View {
     private var header: some View {
         HStack(spacing: 16) {
             FaviconView(
-                urlString: item.category == VaultCategory.login.rawValue ? item.url : "",
-                fallbackIcon: VaultCategory(rawValue: item.category)?.icon ?? "doc.fill",
+                urlString: item.url,
+                category: VaultCategory(rawValue: item.category) ?? .login,
                 size: 56
             )
 

@@ -1,15 +1,15 @@
 import SwiftUI
 
-/// A view that asynchronously loads and displays a favicon for a given URL using DuckDuckGo's service.
-/// Falls back to a provided category icon if the load fails or the URL is empty.
+/// A view that asynchronously loads and displays a favicon for a given URL.
+/// Falls back to the rich CategoryIcon if the load fails or the URL is empty.
 struct FaviconView: View {
     let urlString: String
-    let fallbackIcon: String
+    let category: VaultCategory
     let size: CGFloat
 
-    init(urlString: String, fallbackIcon: String, size: CGFloat = 36) {
+    init(urlString: String, category: VaultCategory, size: CGFloat = 40) {
         self.urlString = urlString
-        self.fallbackIcon = fallbackIcon
+        self.category = category
         self.size = size
     }
 
@@ -33,47 +33,39 @@ struct FaviconView: View {
     }
 
     private var faviconUrl: URL? {
-        guard let domain = domainStr, !domain.isEmpty else { return nil }
-        // Use Google's service with a larger size (128) to ensure high resolution.
+        guard category == .login,
+              let domain = domainStr, !domain.isEmpty else { return nil }
         return URL(string: "https://www.google.com/s2/favicons?domain=\(domain)&sz=128")
     }
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: size * (8.0 / 36.0), style: .continuous)
-                .fill(Color.fpAccentPurple.opacity(0.15))
-                .frame(width: size, height: size)
-
+        Group {
             if let faviconUrl = faviconUrl {
                 AsyncImage(url: faviconUrl) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView()
-                            .scaleEffect(0.5)
-                            .frame(width: size, height: size)
+                        ZStack {
+                            CategoryIcon(category, size: size)
+                            ProgressView()
+                                .scaleEffect(0.5)
+                        }
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: size * 0.85, height: size * 0.85)
+                            .frame(width: size, height: size)
                             .background(Color.white)
-                            .clipShape(RoundedRectangle(cornerRadius: size * (4.0 / 36.0), style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: size * 0.2222, style: .continuous))
                     case .failure:
-                        fallbackIconView
+                        CategoryIcon(category, size: size)
                     @unknown default:
-                        fallbackIconView
+                        CategoryIcon(category, size: size)
                     }
                 }
             } else {
-                fallbackIconView
+                CategoryIcon(category, size: size)
             }
         }
         .frame(width: size, height: size)
-    }
-
-    private var fallbackIconView: some View {
-        Image(systemName: fallbackIcon)
-            .font(.system(size: size * (15.0 / 36.0)))
-            .foregroundColor(.fpAccentPurple)
     }
 }

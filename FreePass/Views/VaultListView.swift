@@ -435,14 +435,14 @@ struct VaultItemRow: View {
     var isSelected: Bool = false
     @State private var isHovering = false
 
-    private var categoryIcon: String {
-        VaultCategory(rawValue: item.category)?.icon ?? "doc.fill"
+    private var resolvedCategory: VaultCategory {
+        VaultCategory(rawValue: item.category) ?? .login
     }
 
     var body: some View {
         HStack(spacing: 14) {
             // Category icon / Favicon
-            FaviconView(urlString: item.category == VaultCategory.login.rawValue ? item.url : "", fallbackIcon: categoryIcon, size: 40)
+            FaviconView(urlString: item.url, category: resolvedCategory, size: 40)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -479,170 +479,223 @@ struct VaultItemRow: View {
 struct CategorySelectionView: View {
     @Environment(\.dismiss) private var dismiss
     var onSelect: (VaultCategory) -> Void
-    
+
+    @State private var searchText = ""
+
+    private var filteredMain: [VaultCategory] {
+        guard !searchText.isEmpty else { return VaultCategory.mainCategories }
+        return VaultCategory.mainCategories.filter {
+            $0.rawValue.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
+    private var filteredOther: [VaultCategory] {
+        guard !searchText.isEmpty else { return VaultCategory.otherCategories }
+        return VaultCategory.otherCategories.filter {
+            $0.rawValue.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
     let mainColumns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
     ]
-    
+
     let otherColumns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
     ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text("Choose Item Type")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(.fpTextPrimary)
-                Spacer()
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.fpTextTertiary)
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(20)
-            
-            Divider().background(Color.fpSurfaceBorder)
-            
+        ZStack(alignment: .topTrailing) {
+            // ── Dark gradient background ──────────────────────────────────
+            LinearGradient(
+                colors: [
+                    Color(red: 0.14, green: 0.14, blue: 0.22),
+                    Color(red: 0.18, green: 0.18, blue: 0.28)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
             ScrollView {
-                VStack(spacing: 24) {
-                    
-                    // Main Categories
-                    LazyVGrid(columns: mainColumns, spacing: 16) {
-                        ForEach(VaultCategory.mainCategories) { category in
-                            MainCategoryCard(category: category)
-                                .onTapGesture {
-                                    dismiss()
-                                    // slight delay to allow sheet to properly dismiss before presenting the next one
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        onSelect(category)
-                                    }
-                                }
+                VStack(spacing: 0) {
+                    // ── Title ─────────────────────────────────────────────
+                    Text("What would you like to add?")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 44)
+                        .padding(.horizontal, 32)
+
+                    // ── Search bar ────────────────────────────────────────
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.45))
+
+                        TextField("", text: $searchText, prompt:
+                            Text("Try searching anything")
+                                .foregroundColor(Color.white.opacity(0.40))
+                        )
+                        .font(.system(size: 14))
+                        .foregroundColor(.white)
+                        .textFieldStyle(.plain)
+
+                        if !searchText.isEmpty {
+                            Button {
+                                searchText = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(Color.white.opacity(0.4))
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
-                    
-                    Divider().background(Color.fpSurfaceBorder)
-                    
-                    // Other Categories
-                    LazyVGrid(columns: otherColumns, spacing: 16) {
-                        ForEach(VaultCategory.otherCategories) { category in
-                            OtherCategoryCard(category: category)
-                                .onTapGesture {
-                                    dismiss()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        onSelect(category)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Color.white.opacity(0.10))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 18)
+                    .padding(.bottom, 24)
+
+                    // ── Main category grid ────────────────────────────────
+                    if !filteredMain.isEmpty {
+                        LazyVGrid(columns: mainColumns, spacing: 12) {
+                            ForEach(filteredMain) { category in
+                                MainCategoryCard(category: category)
+                                    .onTapGesture {
+                                        dismiss()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            onSelect(category)
+                                        }
                                     }
-                                }
+                            }
                         }
+                        .padding(.horizontal, 20)
                     }
+
+                    // ── Separator ─────────────────────────────────────────
+                    if !filteredMain.isEmpty && !filteredOther.isEmpty {
+                        Rectangle()
+                            .fill(Color.white.opacity(0.08))
+                            .frame(height: 1)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 20)
+                    }
+
+                    // ── Other categories grid ─────────────────────────────
+                    if !filteredOther.isEmpty {
+                        LazyVGrid(columns: otherColumns, spacing: 12) {
+                            ForEach(filteredOther) { category in
+                                OtherCategoryCard(category: category)
+                                    .onTapGesture {
+                                        dismiss()
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            onSelect(category)
+                                        }
+                                    }
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                    }
+
+                    // Empty state
+                    if filteredMain.isEmpty && filteredOther.isEmpty {
+                        VStack(spacing: 8) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 32))
+                                .foregroundColor(Color.white.opacity(0.3))
+                            Text("No results for \"\(searchText)\"")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color.white.opacity(0.4))
+                        }
+                        .padding(.top, 40)
+                    }
+
+                    Spacer(minLength: 32)
                 }
-                .padding(24)
             }
+
+            // ── × close button ────────────────────────────────────────────
+            Button { dismiss() } label: {
+                Text("×")
+                    .font(.system(size: 22, weight: .light))
+                    .foregroundColor(Color.white.opacity(0.55))
+                    .frame(width: 30, height: 30)
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 12)
+            .padding(.trailing, 16)
         }
-        .frame(width: 540, height: 600)
-        .background(Color.fpSurface)
+        .frame(width: 540, height: 620)
     }
 }
 
 struct MainCategoryCard: View {
     let category: VaultCategory
     @State private var isHovering = false
-    
-    private var baseColor: Color {
-        switch category.color {
-        case "fpAccentBlue": return .blue
-        case "fpSuccess": return .green
-        case "fpWarning": return .orange
-        case "fpDanger": return .pink
-        case "fpAccentPurple": return .purple
-        case "fpTextPrimary": return .white
-        case "fpTextSecondary": return .gray
-        default: return .blue
-        }
-    }
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(baseColor.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                Image(systemName: category.icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(baseColor)
-            }
-            
+        VStack(alignment: .leading, spacing: 14) {
+            CategoryIcon(category, size: 52)
+
             Text(category.rawValue)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.fpTextPrimary)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.white)
+                .lineLimit(2)
         }
-        .padding(16)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isHovering ? Color.fpSurfaceHover : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(isHovering ? Color.fpTextTertiary : Color.fpSurfaceBorder, lineWidth: 1)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.white.opacity(isHovering ? 0.12 : 0.07))
         )
-        .onHover { hover in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovering = hover
-            }
-        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.white.opacity(isHovering ? 0.22 : 0.10), lineWidth: 1)
+        )
+        .scaleEffect(isHovering ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isHovering)
+        .onHover { isHovering = $0 }
     }
 }
 
 struct OtherCategoryCard: View {
     let category: VaultCategory
     @State private var isHovering = false
-    
-    private var baseColor: Color {
-        switch category.color {
-        case "fpAccentBlue": return .blue
-        case "fpSuccess": return .green
-        case "fpWarning": return .orange
-        case "fpDanger": return .pink
-        case "fpAccentPurple": return .purple
-        case "fpTextPrimary": return .white
-        case "fpTextSecondary": return .gray
-        default: return .gray
-        }
-    }
-    
+
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(baseColor.opacity(0.15))
-                    .frame(width: 36, height: 36)
-                Image(systemName: category.icon)
-                    .font(.system(size: 16))
-                    .foregroundColor(baseColor)
-            }
-            
+        HStack(spacing: 14) {
+            CategoryIcon(category, size: 40)
+
             Text(category.rawValue)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundColor(.fpTextPrimary)
-            
-            Spacer()
+                .foregroundColor(.white)
+                .lineLimit(2)
+
+            Spacer(minLength: 0)
         }
-        .padding(10)
-        .background(isHovering ? Color.fpSurfaceHover : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(isHovering ? Color.fpTextTertiary : Color.fpSurfaceBorder, lineWidth: 1)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(isHovering ? 0.12 : 0.07))
         )
-        .onHover { hover in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovering = hover
-            }
-        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.white.opacity(isHovering ? 0.22 : 0.10), lineWidth: 1)
+        )
+        .scaleEffect(isHovering ? 1.01 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isHovering)
+        .onHover { isHovering = $0 }
     }
 }
+

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		037E8315F2A2CFD2CACA04E7 /* VaultDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1CFC041BD48AD0D160BE95 /* VaultDetailView.swift */; };
 		0990AF10522D7C6B425FE2FE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7543175A6296806120ECFC1 /* AppState.swift */; };
+		0B3A1C2D4E5F678901234567 /* CategoryIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3A1C2D4E5F67890123456A /* CategoryIcon.swift */; };
 		1060BB71A65F2381EAEF375D /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F2C7501A86DAA0CB7E83B4 /* ClipboardManager.swift */; };
 		168429805D1B5CAFD8D5F2BD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5C5F1A4DD90D5BA3C6845C /* SettingsView.swift */; };
 		1C221CAAD08BE0399991C95F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282E1054C1F6AE341AE844B4 /* SafariWebExtensionHandler.swift */; };
@@ -82,6 +83,7 @@
 /* Begin PBXFileReference section */
 		07CD1C7AF65F21C8AD6EA262 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0EFA0867C09F4DD5583F3F0C /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		0B3A1C2D4E5F67890123456A /* CategoryIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIcon.swift; sourceTree = "<group>"; };
 		113AB6E631C8FF44D1349287 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
 		16272795558EFD0A2644825D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
 		222F9B8FA271603FC0AE61E3 /* AddEditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditItemView.swift; sourceTree = "<group>"; };
@@ -195,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				222F9B8FA271603FC0AE61E3 /* AddEditItemView.swift */,
+				0B3A1C2D4E5F67890123456A /* CategoryIcon.swift */,
 				91A9D1F089185CA366CC67B1 /* ContentView.swift */,
 				7E31D60D0A4B15B988595DC6 /* MenuBarPopoverView.swift */,
 				6B5F421A9E640075EA7AA259 /* OnboardingView.swift */,
@@ -431,6 +434,7 @@
 				CD4469FE9C265ADF56312BF8 /* AddEditItemView.swift in Sources */,
 				0990AF10522D7C6B425FE2FE /* AppState.swift in Sources */,
 				BEFD3E436AEB20B9574F49E5 /* BiometricAuth.swift in Sources */,
+				0B3A1C2D4E5F678901234567 /* CategoryIcon.swift in Sources */,
 				1060BB71A65F2381EAEF375D /* ClipboardManager.swift in Sources */,
 				96DC209BFB190C399F601903 /* ContentView.swift in Sources */,
 				758173F0DCB305154570381F /* CryptoManager.swift in Sources */,

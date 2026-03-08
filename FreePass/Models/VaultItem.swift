@@ -117,63 +117,6 @@ enum VaultCategory: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var icon: String {
-        switch self {
-        case .all: return "tray.full.fill"
-        case .login: return "lock.square.fill"
-        case .secureNote: return "note.text"
-        case .creditCard: return "creditcard.fill"
-        case .identity: return "person.text.rectangle.fill"
-        case .password: return "key.fill"
-        case .document: return "doc.fill"
-        case .sshKey: return "terminal.fill"
-        case .apiCredentials: return "curlybraces.square.fill"
-        case .bankAccount: return "dollarsign.circle.fill"
-        case .cryptoWallet: return "lanyardcard.fill"
-        case .database: return "cylinder.split.1x2.fill"
-        case .driverLicense: return "car.fill"
-        case .email: return "envelope.fill"
-        case .medicalRecord: return "heart.text.square.fill"
-        case .membership: return "star.circle.fill"
-        case .outdoorLicense: return "leaf.fill"
-        case .passport: return "text.book.closed.fill"
-        case .rewards: return "gift.fill"
-        case .server: return "server.rack"
-        case .socialSecurityNumber: return "shield.fill"
-        case .softwareLicense: return "checkmark.seal.fill"
-        case .wirelessRouter: return "wifi.router.fill"
-        case .favorites: return "star.fill"
-        }
-    }
-
-    var color: String {
-        switch self {
-        case .all: return "fpAccentPurple"
-        case .login: return "fpAccentBlue"
-        case .secureNote: return "fpWarning"
-        case .creditCard: return "fpAccentBlue"
-        case .identity: return "fpSuccess"
-        case .password: return "fpAccentBlue"
-        case .document: return "fpAccentPurple"
-        case .sshKey: return "fpTextSecondary"
-        case .apiCredentials: return "fpAccentBlue"
-        case .bankAccount: return "fpWarning"
-        case .cryptoWallet: return "fpAccentBlue"
-        case .database: return "fpTextSecondary"
-        case .driverLicense: return "fpDanger"
-        case .email: return "fpDanger"
-        case .medicalRecord: return "fpTextPrimary"
-        case .membership: return "fpAccentPurple"
-        case .outdoorLicense: return "fpSuccess"
-        case .passport: return "fpAccentBlue"
-        case .rewards: return "fpDanger"
-        case .server: return "fpTextSecondary"
-        case .socialSecurityNumber: return "fpAccentBlue"
-        case .softwareLicense: return "fpAccentBlue"
-        case .wirelessRouter: return "fpTextSecondary"
-        case .favorites: return "fpWarning"
-        }
-    }
 
     static var mainCategories: [VaultCategory] {
         [.login, .secureNote, .creditCard, .identity, .password, .document]
