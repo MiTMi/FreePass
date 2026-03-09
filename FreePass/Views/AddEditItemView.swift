@@ -62,12 +62,6 @@ struct AddEditItemView: View {
         default:          return true
         }
     }
-    private var orderedSpecs: [CategoryFieldSpec] {
-        let specs = category.fieldSpecs
-        guard !fieldOrder.isEmpty else { return specs }
-        let map = Dictionary(uniqueKeysWithValues: specs.map { ($0.id, $0) })
-        return fieldOrder.compactMap { map[$0] }
-    }
 
     // MARK: - Body
 
@@ -153,7 +147,9 @@ struct AddEditItemView: View {
                 ForEach(VaultCategory.itemCategories) { cat in
                     Button {
                         category = cat
-                        fieldOrder = cat.fieldSpecs.map { $0.id }
+                        if cat == .login { fieldOrder = ["__url", "__username", "__password"] }
+                        else if cat == .creditCard { fieldOrder = ["__cnum", "__cexp", "__ccvv"] + cat.fieldSpecs.map { $0.id } }
+                        else { fieldOrder = cat.fieldSpecs.map { $0.id } }
                         showCategoryPicker = false
                     } label: {
                         HStack(spacing: 10) {
@@ -177,35 +173,29 @@ struct AddEditItemView: View {
 
     @ViewBuilder
     private var categoryFields: some View {
-        switch category {
-        case .secureNote: EmptyView()
-        case .login:
+        if category != .secureNote && !fieldOrder.isEmpty {
             fieldsCard {
-                fieldRow(label: "Website URL", placeholder: "https://example.com", text: .init(get: { url }, set: { url = $0 }), secure: false, key: "url")
-                dividerLine
-                fieldRow(label: "Username", placeholder: "user@example.com", text: .init(get: { username }, set: { username = $0 }), secure: false, key: "username")
-                dividerLine
-                passwordFieldRow
-            }
-        case .creditCard:
-            fieldsCard {
-                fieldRow(label: "Card Number", placeholder: "4111 1111 1111 1111", text: .init(get: { cardNumber }, set: { cardNumber = $0 }), secure: true, key: "cnum")
-                dividerLine
-                fieldRow(label: "Expiration", placeholder: "MM/YY", text: .init(get: { cardExpiration }, set: { cardExpiration = $0 }), secure: false, key: "cexp")
-                dividerLine
-                fieldRow(label: "CVV", placeholder: "123", text: .init(get: { cardCVV }, set: { cardCVV = $0 }), secure: true, key: "ccvv")
-                ForEach(category.fieldSpecs) { spec in dividerLine; specRow(spec) }
-            }
-        default:
-            if !orderedSpecs.isEmpty {
-                fieldsCard {
-                    ForEach(Array(orderedSpecs.enumerated()), id: \.element.id) { i, spec in
-                        if i > 0 { dividerLine }
-                        specRow(spec)
-                            .onDrag { draggedFieldId = spec.id; return NSItemProvider(object: spec.id as NSString) }
-                            .onDrop(of: [.plainText], delegate: CategoryFieldDropDelegate(targetId: spec.id, fieldOrder: $fieldOrder, draggedId: $draggedFieldId))
-                    }
+                ForEach(Array(fieldOrder.enumerated()), id: \.element) { i, fieldId in
+                    if i > 0 { dividerLine }
+                    viewForField(id: fieldId)
+                        .onDrop(of: [.plainText], delegate: CategoryFieldDropDelegate(targetId: fieldId, fieldOrder: $fieldOrder, draggedId: $draggedFieldId))
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func viewForField(id: String) -> some View {
+        switch id {
+        case "__url": fieldRow(label: "Website URL", placeholder: "https://example.com", text: $url, secure: false, key: "__url", fieldId: id)
+        case "__username": fieldRow(label: "Username", placeholder: "user@example.com", text: $username, secure: false, key: "__username", fieldId: id)
+        case "__password": passwordFieldRow
+        case "__cnum": fieldRow(label: "Card Number", placeholder: "4111 1111 1111 1111", text: $cardNumber, secure: true, key: "__cnum", fieldId: id)
+        case "__cexp": fieldRow(label: "Expiration", placeholder: "MM/YY", text: $cardExpiration, secure: false, key: "__cexp", fieldId: id)
+        case "__ccvv": fieldRow(label: "CVV", placeholder: "123", text: $cardCVV, secure: true, key: "__ccvv", fieldId: id)
+        default:
+            if let spec = category.fieldSpecs.first(where: { $0.id == id }) {
+                specRow(spec)
             }
         }
     }
@@ -237,7 +227,6 @@ struct AddEditItemView: View {
                 ForEach(Array(customFields.enumerated()), id: \.element.id) { i, _ in
                     if i > 0 { dividerLine }
                     customFieldRow(i)
-                        .onDrag { draggedCustomId = customFields[i].id; return NSItemProvider(object: customFields[i].id.uuidString as NSString) }
                         .onDrop(of: [.plainText], delegate: CustomFieldDropDelegate(targetId: customFields[i].id, fields: $customFields, draggedId: $draggedCustomId))
                 }
                 if addMoreExpanded {
@@ -261,7 +250,7 @@ struct AddEditItemView: View {
 
     private func customFieldRow(_ i: Int) -> some View {
         HStack(spacing: 10) {
-            dragHandle
+            dragHandle { draggedCustomId = customFields[i].id; return NSItemProvider(object: customFields[i].id.uuidString as NSString) }
             VStack(alignment: .leading, spacing: 2) {
                 TextField("Field name", text: Binding(get: { customFields[i].label }, set: { customFields[i].label = $0 }))
                     .textFieldStyle(.plain).font(.system(size: 12, weight: .medium)).foregroundColor(lbl)
@@ -443,8 +432,26 @@ struct AddEditItemView: View {
 
     // MARK: - Reusable row components
 
-    private var dragHandle: some View {
-        Image(systemName: "line.3.horizontal").font(.system(size: 11)).foregroundColor(Color(white: 0.35)).frame(width: 18)
+    @ViewBuilder
+    private func dragHandle(onDrag: (() -> NSItemProvider)? = nil) -> some View {
+        let handle = Image(systemName: "line.3.horizontal")
+            .font(.system(size: 11))
+            .foregroundColor(Color(white: 0.35))
+            .frame(width: 18, height: 24)
+            .background(Color.white.opacity(0.001))
+        
+        if let onDrag {
+            handle.onDrag(onDrag, preview: {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 15))
+                    .foregroundColor(.white)
+                    .frame(width: 30, height: 30)
+                    .background(Color(red: 0.27, green: 0.55, blue: 0.98))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            })
+        } else {
+            handle
+        }
     }
 
     private var dividerLine: some View {
@@ -472,9 +479,9 @@ struct AddEditItemView: View {
     }
 
     /// Generic field row (URL, username, card fields)
-    private func fieldRow(label: String, placeholder: String, text: Binding<String>, secure: Bool, key: String) -> some View {
+    private func fieldRow(label: String, placeholder: String, text: Binding<String>, secure: Bool, key: String, fieldId: String) -> some View {
         HStack(spacing: 10) {
-            dragHandle
+            dragHandle { draggedFieldId = fieldId; return NSItemProvider(object: fieldId as NSString) }
             VStack(alignment: .leading, spacing: 2) {
                 Text(label).font(.system(size: 12, weight: .medium)).foregroundColor(lbl)
                 HStack {
@@ -494,7 +501,7 @@ struct AddEditItemView: View {
 
     private var passwordFieldRow: some View {
         HStack(spacing: 10) {
-            dragHandle
+            dragHandle { draggedFieldId = "__password"; return NSItemProvider(object: "__password" as NSString) }
             VStack(alignment: .leading, spacing: 2) {
                 Text("Password").font(.system(size: 12, weight: .medium)).foregroundColor(lbl)
                 HStack {
@@ -526,7 +533,7 @@ struct AddEditItemView: View {
 
     private func specRow(_ spec: CategoryFieldSpec) -> some View {
         HStack(spacing: 10) {
-            dragHandle
+            dragHandle { draggedFieldId = spec.id; return NSItemProvider(object: spec.id as NSString) }
             VStack(alignment: .leading, spacing: 2) {
                 Text(spec.label).font(.system(size: 12, weight: .medium)).foregroundColor(lbl)
                 if spec.isMultiline {
@@ -566,13 +573,14 @@ struct AddEditItemView: View {
         case .add(let cat):
             category = cat
             title = cat.rawValue
-            fieldOrder = cat.fieldSpecs.map { $0.id }
+            if cat == .login { fieldOrder = ["__url", "__username", "__password"] }
+            else if cat == .creditCard { fieldOrder = ["__cnum", "__cexp", "__ccvv"] + cat.fieldSpecs.map { $0.id } }
+            else { fieldOrder = cat.fieldSpecs.map { $0.id } }
         case .edit(let item):
             category = VaultCategory(rawValue: item.category) ?? .login
             title = item.title; username = item.username; url = item.url
             showLocationField = !item.url.isEmpty && category != .login
             isFavorite = item.isFavorite
-            fieldOrder = category.fieldSpecs.map { $0.id }
             guard let key = appState.derivedKey else { return }
             password = item.decryptedPassword(using: key) ?? ""
             notes = item.decryptedNotes(using: key) ?? ""
@@ -580,6 +588,16 @@ struct AddEditItemView: View {
             cardExpiration = item.decryptedCardExpiration(using: key) ?? ""
             cardCVV = item.decryptedCardCVV(using: key) ?? ""
             var all = item.decryptedFields(using: key) ?? [:]
+            
+            // Extract fieldOrder
+            if let orderStr = all.removeValue(forKey: "__fieldOrder") {
+                fieldOrder = orderStr.split(separator: ",").map(String.init)
+            } else {
+                if category == .login { fieldOrder = ["__url", "__username", "__password"] }
+                else if category == .creditCard { fieldOrder = ["__cnum", "__cexp", "__ccvv"] + category.fieldSpecs.map { $0.id } }
+                else { fieldOrder = category.fieldSpecs.map { $0.id } }
+            }
+
             // Extract custom fields
             if let cfJson = all.removeValue(forKey: "__custom"),
                let cfData = cfJson.data(using: .utf8),
@@ -604,6 +622,17 @@ struct AddEditItemView: View {
             let encCVV:  Data? = cardCVV.isEmpty ? nil : try CryptoManager.encrypt(cardCVV, using: key)
 
             var extra = fieldValues.filter { !$0.value.isEmpty }
+            
+            // Serialize field order correctly
+            let defaultSpecs: [String]
+            if category == .login { defaultSpecs = ["__url", "__username", "__password"] }
+            else if category == .creditCard { defaultSpecs = ["__cnum", "__cexp", "__ccvv"] + category.fieldSpecs.map { $0.id } }
+            else { defaultSpecs = category.fieldSpecs.map { $0.id } }
+            
+            if fieldOrder != defaultSpecs && !fieldOrder.isEmpty {
+                extra["__fieldOrder"] = fieldOrder.joined(separator: ",")
+            }
+
             // Serialize custom fields
             if !customFields.isEmpty, let cfData = try? JSONEncoder().encode(customFields), let cfStr = String(data: cfData, encoding: .utf8) {
                 extra["__custom"] = cfStr
