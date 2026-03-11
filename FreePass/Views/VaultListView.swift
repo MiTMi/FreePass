@@ -153,7 +153,7 @@ struct VaultListView: View {
 
     private var sidebar: some View {
         ZStack {
-            Color.fpSidebar.opacity(0.90).ignoresSafeArea()
+            Color.fpSidebar.opacity(0.80).ignoresSafeArea()
                 .background(.ultraThinMaterial)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
@@ -428,8 +428,8 @@ struct VaultListView: View {
                     Image("VaultEmptyState")
                         .resizable()
                         .scaledToFit()
-                        .frame(maxWidth: 320, maxHeight: 320)
-                        .opacity(0.6)
+                        .frame(maxWidth: 400, maxHeight: 400)
+                        .opacity(0.8)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
