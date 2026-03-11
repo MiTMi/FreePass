@@ -21,6 +21,7 @@ struct VaultListView: View {
     @State private var showingCategorySelection = false
     @State private var categoryToAdd: VaultCategory = .login
     @State private var showingGenerator = false
+    @State private var listCategoryFilter: VaultCategory = .all
 
     private var filteredItems: [VaultItem] {
         var result = allItems
@@ -41,6 +42,11 @@ struct VaultListView: View {
             result = result.filter { $0.isTrashed }
         }
 
+        // Apply the middle-pane category filter
+        if listCategoryFilter != .all {
+            result = result.filter { $0.category == listCategoryFilter.rawValue }
+        }
+
         if !searchText.isEmpty {
             result = result.filter {
                 $0.title.localizedCaseInsensitiveContains(searchText) ||
@@ -50,6 +56,22 @@ struct VaultListView: View {
         }
 
         return result
+    }
+
+    /// Groups filtered items by their creation month/year, sorted newest-first.
+    private var groupedItems: [(key: String, items: [VaultItem])] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: filteredItems) { item -> Date in
+            let comps = calendar.dateComponents([.year, .month], from: item.createdAt)
+            return calendar.date(from: comps) ?? item.createdAt
+        }
+
+        return grouped
+            .sorted { $0.key > $1.key }
+            .map { (key: formatter.string(from: $0.key).uppercased(), items: $0.value) }
     }
 
     private var categoryCounts: [VaultCategory: Int] {
@@ -131,7 +153,8 @@ struct VaultListView: View {
 
     private var sidebar: some View {
         ZStack {
-            Color.fpSidebar.ignoresSafeArea()
+            Color.fpSidebar.opacity(0.90).ignoresSafeArea()
+                .background(.ultraThinMaterial)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     // User Profile Header
@@ -235,75 +258,158 @@ struct VaultListView: View {
     private var itemList: some View {
         ZStack {
             Color.fpList.ignoresSafeArea()
-            Group {
+            VStack(spacing: 0) {
+                // Category filter dropdown header
+                categoryFilterHeader
+                    .padding(.horizontal, 12)
+                    .padding(.top, 10)
+                    .padding(.bottom, 6)
+
+                Divider()
+                    .opacity(0.3)
+
                 if filteredItems.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: searchText.isEmpty ? "tray" : "magnifyingglass")
-                        .font(.system(size: 36))
-                        .foregroundColor(.fpTextTertiary)
-                    Text(searchText.isEmpty ? "No items yet" : "No results found")
-                        .font(.headline)
-                        .foregroundColor(.fpTextSecondary)
-                    if searchText.isEmpty {
-                        Button("Add your first item") {
-                            showingAddItem = true
+                    VStack(spacing: 12) {
+                        Image(systemName: searchText.isEmpty ? "tray" : "magnifyingglass")
+                            .font(.system(size: 36))
+                            .foregroundColor(.fpTextTertiary)
+                        Text(searchText.isEmpty ? "No items yet" : "No results found")
+                            .font(.headline)
+                            .foregroundColor(.fpTextSecondary)
+                        if searchText.isEmpty {
+                            Button("Add your first item") {
+                                showingAddItem = true
+                            }
+                            .buttonStyle(.bordered)
                         }
-                        .buttonStyle(.bordered)
                     }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 2) {
-                        ForEach(filteredItems) { item in
-                            VaultItemRow(item: item, isSelected: selectedItem == item)
-                                .onTapGesture {
-                                    selectedItem = item
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0, pinnedViews: []) {
+                            ForEach(groupedItems, id: \.key) { group in
+                                // Month/year section header
+                                HStack {
+                                    Text(group.key)
+                                        .font(.system(size: 11, weight: .bold))
+                                        .foregroundColor(.fpTextSecondary)
+                                        .tracking(0.5)
+                                    Spacer()
                                 }
-                                .contextMenu {
-                                   if item.isTrashed {
-                                       Button("Restore") {
-                                           item.isTrashed = false
-                                           item.trashedAt = nil
-                                           try? modelContext.save()
-                                       }
-                                       Button("Delete permanently", role: .destructive) {
-                                           if selectedItem == item { selectedItem = nil }
-                                           modelContext.delete(item)
-                                           try? modelContext.save()
-                                       }
-                                   } else {
-                                        if let key = appState.derivedKey,
-                                           let password = item.decryptedPassword(using: key) {
-                                            Button("Copy Password") {
-                                                ClipboardManager.shared.copy(password)
+                                .padding(.horizontal, 14)
+                                .padding(.top, 18)
+                                .padding(.bottom, 6)
+
+                                ForEach(group.items) { item in
+                                    VaultItemRow(item: item, isSelected: selectedItem == item)
+                                        .onTapGesture {
+                                            selectedItem = item
+                                        }
+                                        .contextMenu {
+                                           if item.isTrashed {
+                                               Button("Restore") {
+                                                   item.isTrashed = false
+                                                   item.trashedAt = nil
+                                                   try? modelContext.save()
+                                               }
+                                               Button("Delete permanently", role: .destructive) {
+                                                   if selectedItem == item { selectedItem = nil }
+                                                   modelContext.delete(item)
+                                                   try? modelContext.save()
+                                               }
+                                           } else {
+                                                if let key = appState.derivedKey,
+                                                   let password = item.decryptedPassword(using: key) {
+                                                    Button("Copy Password") {
+                                                        ClipboardManager.shared.copy(password)
+                                                    }
+                                                }
+                                                Button("Copy Username") {
+                                                    ClipboardManager.shared.copy(item.username)
+                                                }
+                                                Divider()
+                                                Button(item.isFavorite ? "Remove from Favorites" : "Add to Favorites") {
+                                                    item.isFavorite.toggle()
+                                                }
+                                                Button(item.isArchived ? "Unarchive" : "Archive") {
+                                                    item.isArchived.toggle()
+                                                    try? modelContext.save()
+                                                    if selectedItem == item { selectedItem = nil }
+                                                }
+                                                Divider()
+                                                Button("Delete", role: .destructive) {
+                                                    deleteItem(item)
+                                                }
                                             }
                                         }
-                                        Button("Copy Username") {
-                                            ClipboardManager.shared.copy(item.username)
-                                        }
-                                        Divider()
-                                        Button(item.isFavorite ? "Remove from Favorites" : "Add to Favorites") {
-                                            item.isFavorite.toggle()
-                                        }
-                                        Button(item.isArchived ? "Unarchive" : "Archive") {
-                                            item.isArchived.toggle()
-                                            try? modelContext.save()
-                                            if selectedItem == item { selectedItem = nil }
-                                        }
-                                        Divider()
-                                        Button("Delete", role: .destructive) {
-                                            deleteItem(item)
-                                        }
-                                    }
                                 }
+                            }
                         }
+                        .padding(.horizontal, 8)
+                        .padding(.bottom, 8)
                     }
-                    .padding(8)
-                }
-                .animation(.default, value: filteredItems.count)
+                    .animation(.default, value: filteredItems.count)
                 }
             }
+        }
+    }
+
+    // MARK: - Category Filter Header
+
+    private var categoryFilterHeader: some View {
+        HStack {
+            Menu {
+                // "All Categories" option
+                Button {
+                    listCategoryFilter = .all
+                } label: {
+                    Label("All Categories", systemImage: "tray.full.fill")
+                }
+
+                Divider()
+
+                // Each item category
+                ForEach(VaultCategory.itemCategories) { cat in
+                    Button {
+                        listCategoryFilter = cat
+                    } label: {
+                        Label(cat.rawValue, systemImage: cat.primarySymbol)
+                    }
+                }
+            } label: {
+                HStack(spacing: 6) {
+                    // Category icon
+                    if listCategoryFilter == .all {
+                        Image(systemName: "tray.full.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.fpAccentBlue)
+                    } else {
+                        CategoryIcon(listCategoryFilter, size: 22)
+                    }
+
+                    Text(listCategoryFilter == .all ? "All Categories" : listCategoryFilter.rawValue)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.fpTextPrimary)
+                        .lineLimit(1)
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.fpTextSecondary)
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 8)
+                .background(Color.fpSurfaceHover.opacity(0.5))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+            .menuStyle(.borderlessButton)
+            .fixedSize()
+
+            Spacer()
+
+            // Item count
+            Text("\(filteredItems.count) items")
+                .font(.system(size: 12))
+                .foregroundColor(.fpTextSecondary)
         }
     }
 
@@ -319,18 +425,12 @@ struct VaultListView: View {
                         deleteItem(item)
                     })
                 } else {
-                    VStack(spacing: 12) {
-                        Image("AppLogo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 64, height: 64)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 3)
-                        Text("Select an item to view details")
-                            .font(.title3)
-                            .foregroundColor(.fpTextSecondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    Image("VaultEmptyState")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 320, maxHeight: 320)
+                        .opacity(0.6)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }
