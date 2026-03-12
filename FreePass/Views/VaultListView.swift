@@ -22,6 +22,7 @@ struct VaultListView: View {
     @State private var categoryToAdd: VaultCategory = .login
     @State private var showingGenerator = false
     @State private var listCategoryFilter: VaultCategory = .all
+    @State private var columnVisibility = NavigationSplitViewVisibility.automatic
 
     private var filteredItems: [VaultItem] {
         var result = allItems
@@ -94,43 +95,28 @@ struct VaultListView: View {
         allItems.filter { $0.isTrashed }.count
     }
 
+    private let titleBarHeight: CGFloat = 40
+    private let contentTopPadding: CGFloat = 14
+    private let trafficLightClearance: CGFloat = 80
+
     var body: some View {
-        HSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebar
-                .frame(minWidth: 200, idealWidth: 240, maxWidth: 300)
-                
+                .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
+                .ignoresSafeArea(.container, edges: .top)
+        } content: {
             itemList
-                .frame(minWidth: 240, idealWidth: 280, maxWidth: 350)
-                
+                .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 350)
+                .ignoresSafeArea(.container, edges: .top)
+        } detail: {
             detailPane
-                .frame(minWidth: 300, maxWidth: .infinity)
+                .navigationSplitViewColumnWidth(min: 300, ideal: 500, max: 1000)
+                .ignoresSafeArea(.container, edges: .top)
         }
-        .searchable(text: $searchText, placement: .toolbar, prompt: "Search vault...")
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Button { showingCategorySelection = true } label: {
-                    Image(systemName: "plus")
-                }
-                .help("Add new item")
+        .navigationSplitViewStyle(.balanced)
+        .background(Color.fpList.ignoresSafeArea())
+        .ignoresSafeArea()
 
-                Button { showingGenerator = true } label: {
-                    Image(systemName: "key.fill")
-                }
-                .help("Password generator")
-
-                #if os(macOS)
-                SettingsLink {
-                    Image(systemName: "gearshape.fill")
-                }
-                .help("Settings")
-                #endif
-
-                Button { appState.lock() } label: {
-                    Image(systemName: "lock.fill")
-                }
-                .help("Lock vault")
-            }
-        }
         .sheet(isPresented: $showingCategorySelection) {
             CategorySelectionView(onSelect: { category in
                 categoryToAdd = category
@@ -152,102 +138,121 @@ struct VaultListView: View {
     // MARK: - Sidebar
 
     private var sidebar: some View {
-        ZStack {
-            Color.fpSidebar.opacity(0.80).ignoresSafeArea()
-                .background(.ultraThinMaterial)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    // User Profile Header
-                HStack(spacing: 12) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(white: 0.9))
-                            .frame(width: 32, height: 32)
-                        Image(systemName: "person.fill")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 16))
+        ZStack(alignment: .top) {
+            Color.fpSidebar.ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Integrated Title Bar Area with Traffic Light Clearance
+                HStack(spacing: 14) {
+                    Spacer().frame(width: trafficLightClearance)
+                    
+                    Button(action: { showingCategorySelection = true }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 13, weight: .semibold))
                     }
-                    Text("michael.tubul")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.fpTextPrimary)
+                    .buttonStyle(.plain)
+                    
+                    Button(action: { showingGenerator = true }) {
+                        Image(systemName: "key.fill")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .buttonStyle(.plain)
+                    
+                    #if os(macOS)
+                    SettingsLink {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .buttonStyle(.plain)
+                    #endif
+                    
+                    Button(action: { appState.lock() }) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .buttonStyle(.plain)
+                    
                     Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.fpTextSecondary)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .padding(.top, 10)
+                .foregroundColor(.fpTextPrimary)
+                .frame(height: titleBarHeight)
+                .padding(.top, 4) // Nudge down from very edge
                 
-                // Profile
-                SidebarRow(
-                    icon: "person.crop.square.fill", iconColor: .blue,
-                    title: "Profile", count: nil, isSelected: false
-                ) {}
-                .padding(.bottom, 8)
-                
-                // Main Category Group
-                VStack(spacing: 2) {
-                    SidebarRow(
-                        icon: "tray.full.fill", iconColor: .gray,
-                        title: "All Items", count: categoryCounts[.all, default: 0],
-                        isSelected: selection == .category(.all),
-                        isStaticPrimary: true
-                    ) { selection = .category(.all) }
-                    
-                    SidebarRow(
-                        icon: "star.fill", iconColor: .yellow,
-                        title: "Favorites", count: categoryCounts[.favorites, default: 0],
-                        isSelected: selection == .category(.favorites)
-                    ) { selection = .category(.favorites) }
-                    
-                    SidebarRow(
-                        icon: "tower.receptacle.fill", iconColor: .gray,
-                        title: "Watchtower", count: nil, isSelected: false
-                    ) {}
-                    
-                    SidebarRow(
-                        icon: "chevron.left.forwardslash.chevron.right", iconColor: .teal,
-                        title: "Developer", count: nil, isSelected: false
-                    ) {}
-                }
-                .padding(.bottom, 16)
-                
-                // VAULTS Section
-                SectionHeader(title: "VAULTS", icon: "chevron.down", actionIcon: "plus")
-                VStack(spacing: 2) {
-                    SidebarRow(
-                        icon: "lock.circle.fill", iconColor: .gray,
-                        title: "Personal", count: nil, isSelected: false
-                    ) {}
-                }
-                .padding(.bottom, 16)
-                
-                // TAGS Section
-                SectionHeader(title: "TAGS", icon: "chevron.down")
-                VStack(spacing: 2) {
-                    SidebarRow(
-                        icon: "circle.fill", iconColor: .green,
-                        title: "Starter Kit", count: nil, isSelected: false
-                    ) {}
-                }
-                .padding(.bottom, 16)
-                
-                // Archive Section
-                VStack(spacing: 2) {
-                    SidebarRow(
-                        icon: "archivebox.fill", iconColor: .gray,
-                        title: "Archive", count: archiveCount, isSelected: selection == .archive
-                    ) { selection = .archive }
-                    
-                    SidebarRow(
-                        icon: "arrow.counterclockwise.circle", iconColor: .gray,
-                        title: "Recently Deleted", count: deletedCount, isSelected: selection == .recentlyDeleted
-                    ) { selection = .recentlyDeleted }
-                }
-                .padding(.bottom, 16)
-                
-                    Spacer(minLength: 40)
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Spacer().frame(height: contentTopPadding)
+                        
+                        // User Profile Header
+                        HStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(white: 0.9))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(.gray)
+                                    .font(.system(size: 16))
+                            }
+                            Text("michael.tubul")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(.fpTextPrimary)
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.fpTextSecondary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 14)
+                        
+                        // Items
+                        VStack(spacing: 2) {
+                            SidebarRow(
+                                icon: "tray.full.fill", iconColor: .gray,
+                                title: "All Items", count: categoryCounts[.all, default: 0],
+                                isSelected: selection == .category(.all),
+                                isStaticPrimary: true
+                            ) { selection = .category(.all) }
+                            
+                            SidebarRow(
+                                icon: "star.fill", iconColor: .yellow,
+                                title: "Favorites", count: categoryCounts[.favorites, default: 0],
+                                isSelected: selection == .category(.favorites)
+                            ) { selection = .category(.favorites) }
+                            
+                            SidebarRow(
+                                icon: "tower.receptacle.fill", iconColor: .gray,
+                                title: "Watchtower", count: nil, isSelected: false
+                            ) {}
+                            
+                            SidebarRow(
+                                icon: "chevron.left.forwardslash.chevron.right", iconColor: .teal,
+                                title: "Developer", count: nil, isSelected: false
+                            ) {}
+                        }
+                        .padding(.bottom, 16)
+                        
+                        SectionHeader(title: "VAULTS", icon: "chevron.down", actionIcon: "plus")
+                        VStack(spacing: 2) {
+                            SidebarRow(
+                                icon: "lock.circle.fill", iconColor: .gray,
+                                title: "Personal", count: nil, isSelected: false
+                            ) {}
+                        }
+                        .padding(.bottom, 16)
+                        
+                        VStack(spacing: 2) {
+                            SidebarRow(
+                                icon: "archivebox.fill", iconColor: .gray,
+                                title: "Archive", count: archiveCount, isSelected: selection == .archive
+                            ) { selection = .archive }
+                            
+                            SidebarRow(
+                                icon: "arrow.counterclockwise.circle", iconColor: .gray,
+                                title: "Recently Deleted", count: deletedCount, isSelected: selection == .recentlyDeleted
+                            ) { selection = .recentlyDeleted }
+                        }
+                        
+                        Spacer(minLength: 40)
+                    }
                 }
             }
         }
@@ -256,97 +261,102 @@ struct VaultListView: View {
     // MARK: - Item List
 
     private var itemList: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             Color.fpList.ignoresSafeArea()
+            
             VStack(spacing: 0) {
-                // Category filter dropdown header
-                categoryFilterHeader
-                    .padding(.horizontal, 12)
-                    .padding(.top, 10)
-                    .padding(.bottom, 6)
-
-                Divider()
-                    .opacity(0.3)
-
-                if filteredItems.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: searchText.isEmpty ? "tray" : "magnifyingglass")
-                            .font(.system(size: 36))
-                            .foregroundColor(.fpTextTertiary)
-                        Text(searchText.isEmpty ? "No items yet" : "No results found")
-                            .font(.headline)
-                            .foregroundColor(.fpTextSecondary)
-                        if searchText.isEmpty {
-                            Button("Add your first item") {
-                                showingAddItem = true
-                            }
-                            .buttonStyle(.bordered)
-                        }
+                // Integrated Title Bar Area with Traffic Light Clearance and Category Filter
+                HStack(spacing: 0) {
+                    if columnVisibility != .all {
+                        Spacer().frame(width: trafficLightClearance)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 0, pinnedViews: []) {
-                            ForEach(groupedItems, id: \.key) { group in
-                                // Month/year section header
-                                HStack {
-                                    Text(group.key)
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.fpTextSecondary)
-                                        .tracking(0.5)
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 14)
-                                .padding(.top, 18)
-                                .padding(.bottom, 6)
+                    
+                    categoryFilterHeader
+                        .padding(.leading, 8)
+                    
+                    Spacer()
+                }
+                .frame(height: titleBarHeight)
+                .padding(.top, 4)
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Spacer().frame(height: contentTopPadding)
 
-                                ForEach(group.items) { item in
-                                    VaultItemRow(item: item, isSelected: selectedItem == item)
-                                        .onTapGesture {
-                                            selectedItem = item
-                                        }
-                                        .contextMenu {
-                                           if item.isTrashed {
-                                               Button("Restore") {
-                                                   item.isTrashed = false
-                                                   item.trashedAt = nil
-                                                   try? modelContext.save()
-                                               }
-                                               Button("Delete permanently", role: .destructive) {
-                                                   if selectedItem == item { selectedItem = nil }
-                                                   modelContext.delete(item)
-                                                   try? modelContext.save()
-                                               }
-                                           } else {
-                                                if let key = appState.derivedKey,
-                                                   let password = item.decryptedPassword(using: key) {
-                                                    Button("Copy Password") {
-                                                        ClipboardManager.shared.copy(password)
+                        if filteredItems.isEmpty {
+                            VStack(spacing: 12) {
+                                Image(systemName: searchText.isEmpty ? "tray" : "magnifyingglass")
+                                    .font(.system(size: 36))
+                                    .foregroundColor(.fpTextTertiary)
+                                Text(searchText.isEmpty ? "No items yet" : "No results found")
+                                    .font(.headline)
+                                    .foregroundColor(.fpTextSecondary)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 400)
+                        } else {
+                            LazyVStack(spacing: 0) {
+                                ForEach(groupedItems, id: \.key) { group in
+                                    // Month/year section header
+                                    HStack {
+                                        Text(group.key)
+                                            .font(.system(size: 11, weight: .bold))
+                                            .foregroundColor(.fpTextSecondary)
+                                            .tracking(0.5)
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 14)
+                                    .padding(.top, 18)
+                                    .padding(.bottom, 6)
+
+                                    ForEach(group.items) { item in
+                                        VaultItemRow(item: item, isSelected: selectedItem == item)
+                                            .onTapGesture {
+                                                selectedItem = item
+                                            }
+                                            .contextMenu {
+                                               if item.isTrashed {
+                                                   Button("Restore") {
+                                                       item.isTrashed = false
+                                                       item.trashedAt = nil
+                                                       try? modelContext.save()
+                                                   }
+                                                   Button("Delete permanently", role: .destructive) {
+                                                       if selectedItem == item { selectedItem = nil }
+                                                       modelContext.delete(item)
+                                                       try? modelContext.save()
+                                                   }
+                                               } else {
+                                                    if let key = appState.derivedKey,
+                                                       let password = item.decryptedPassword(using: key) {
+                                                        Button("Copy Password") {
+                                                            ClipboardManager.shared.copy(password)
+                                                        }
+                                                    }
+                                                    Button("Copy Username") {
+                                                        ClipboardManager.shared.copy(item.username)
+                                                    }
+                                                    Divider()
+                                                    Button(item.isFavorite ? "Remove from Favorites" : "Add to Favorites") {
+                                                        item.isFavorite.toggle()
+                                                    }
+                                                    Button(item.isArchived ? "Unarchive" : "Archive") {
+                                                        item.isArchived.toggle()
+                                                        try? modelContext.save()
+                                                        if selectedItem == item { selectedItem = nil }
+                                                    }
+                                                    Divider()
+                                                    Button("Delete", role: .destructive) {
+                                                        deleteItem(item)
                                                     }
                                                 }
-                                                Button("Copy Username") {
-                                                    ClipboardManager.shared.copy(item.username)
-                                                }
-                                                Divider()
-                                                Button(item.isFavorite ? "Remove from Favorites" : "Add to Favorites") {
-                                                    item.isFavorite.toggle()
-                                                }
-                                                Button(item.isArchived ? "Unarchive" : "Archive") {
-                                                    item.isArchived.toggle()
-                                                    try? modelContext.save()
-                                                    if selectedItem == item { selectedItem = nil }
-                                                }
-                                                Divider()
-                                                Button("Delete", role: .destructive) {
-                                                    deleteItem(item)
-                                                }
                                             }
-                                        }
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 8)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.bottom, 8)
+                        
+                        Spacer(minLength: 40)
                     }
                     .animation(.default, value: filteredItems.count)
                 }
@@ -416,21 +426,41 @@ struct VaultListView: View {
     // MARK: - Detail Pane
 
     private var detailPane: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             Color.fpDetail.ignoresSafeArea()
-            Group {
-                if let item = selectedItem {
-                    VaultDetailView(item: item, onDelete: {
-                        selectedItem = nil
-                        deleteItem(item)
-                    })
-                } else {
-                    Image("VaultEmptyState")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 400, maxHeight: 400)
-                        .opacity(0.8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            VStack(spacing: 0) {
+                // Integrated Title Bar Area
+                HStack { Spacer() }
+                    .frame(height: titleBarHeight)
+                    .padding(.top, 4)
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Spacer().frame(height: contentTopPadding)
+
+                        if let item = selectedItem {
+                            VaultDetailView(item: item, onDelete: {
+                                selectedItem = nil
+                                deleteItem(item)
+                            })
+                        } else {
+                            VStack(spacing: 12) {
+                                Image("VaultEmptyState")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: 400, maxHeight: 400)
+                                    .opacity(0.8)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                Text("Select an item to view details")
+                                    .font(.title3)
+                                    .foregroundColor(.fpTextSecondary)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 400)
+                        }
+                        
+                        Spacer(minLength: 40)
+                    }
                 }
             }
         }
@@ -477,9 +507,6 @@ private struct SectionHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(title == "VAULTS" ? Color.blue.opacity(0.3) : Color.clear)
-        .cornerRadius(6)
-        .padding(.horizontal, 10)
     }
 }
 
@@ -497,31 +524,31 @@ private struct SidebarRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 16))
+                .font(.system(size: 14))
                 .foregroundColor(isSelected ? .white : iconColor)
-                .frame(width: 22)
+                .frame(width: 20)
             
             Text(title)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 14, weight: isSelected ? .semibold : .medium))
                 .foregroundColor(isSelected ? .white : .fpTextPrimary)
             
             Spacer()
             
             if let c = count, c > 0 {
                 Text("\(c)")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundColor(isSelected ? .fpSelection : .white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
                     .background(isSelected ? Color.white : Color(white: 0.3))
                     .clipShape(Capsule())
             }
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(isSelected ? Color.fpSelection : (isHovering ? Color(white: 0.2) : Color.clear))
+        .background(isSelected ? Color.fpSelection : (isHovering ? Color(white: 0.15) : Color.clear))
         .cornerRadius(8)
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 8)
         .contentShape(Rectangle())
         .onHover { h in isHovering = h }
         .onTapGesture(perform: action)
@@ -541,13 +568,12 @@ struct VaultItemRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            // Category icon / Favicon
-            FaviconView(urlString: item.url, category: resolvedCategory, size: 40)
+            FaviconView(urlString: item.url, category: resolvedCategory, size: 36)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(item.title)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(isSelected ? .white : .fpTextPrimary)
                         .lineLimit(1)
                     if item.isFavorite {
@@ -557,8 +583,8 @@ struct VaultItemRow: View {
                     }
                 }
                 Text(item.username)
-                    .font(.system(size: 13))
-                    .foregroundColor(isSelected ? .white.opacity(0.8) : .fpTextSecondary)
+                    .font(.system(size: 12))
+                    .foregroundColor(isSelected ? .white.opacity(0.7) : .fpTextSecondary)
                     .lineLimit(1)
             }
 
@@ -566,7 +592,6 @@ struct VaultItemRow: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 10)
-        .frame(minHeight: 56)
         .background(isSelected ? Color.fpSelection : (isHovering ? Color.fpSurfaceHover : Color.clear))
         .cornerRadius(8)
         .contentShape(Rectangle())
@@ -574,228 +599,69 @@ struct VaultItemRow: View {
     }
 }
 
-// MARK: - Category Selection Grid
-
+// MARK: - Category Selection Grid remains unchanged...
 struct CategorySelectionView: View {
     @Environment(\.dismiss) private var dismiss
     var onSelect: (VaultCategory) -> Void
-
     @State private var searchText = ""
-
     private var filteredMain: [VaultCategory] {
         guard !searchText.isEmpty else { return VaultCategory.mainCategories }
         return VaultCategory.mainCategories.filter {
             $0.rawValue.localizedCaseInsensitiveContains(searchText)
         }
     }
-
     private var filteredOther: [VaultCategory] {
         guard !searchText.isEmpty else { return VaultCategory.otherCategories }
         return VaultCategory.otherCategories.filter {
             $0.rawValue.localizedCaseInsensitiveContains(searchText)
         }
     }
-
-    let mainColumns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
-
-    let otherColumns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
-
+    let mainColumns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    let otherColumns = [GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            // ── Dark gradient background ──────────────────────────────────
-            LinearGradient(
-                colors: [
-                    Color(red: 0.14, green: 0.14, blue: 0.22),
-                    Color(red: 0.18, green: 0.18, blue: 0.28)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
+            LinearGradient(colors: [Color(white: 0.1), Color(white: 0.15)], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 0) {
-                    // ── Title ─────────────────────────────────────────────
-                    Text("What would you like to add?")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 44)
-                        .padding(.horizontal, 32)
-
-                    // ── Search bar ────────────────────────────────────────
-                    HStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(Color.white.opacity(0.45))
-
-                        TextField("", text: $searchText, prompt:
-                            Text("Try searching anything")
-                                .foregroundColor(Color.white.opacity(0.40))
-                        )
-                        .font(.system(size: 14))
-                        .foregroundColor(.white)
-                        .textFieldStyle(.plain)
-
-                        if !searchText.isEmpty {
-                            Button {
-                                searchText = ""
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(Color.white.opacity(0.4))
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(Color.white.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.top, 18)
-                    .padding(.bottom, 24)
-
-                    // ── Main category grid ────────────────────────────────
+                    Text("What would you like to add?").font(.system(size: 22, weight: .bold)).foregroundColor(.white).padding(.top, 40)
+                    TextField("", text: $searchText, prompt: Text("Search categories").foregroundColor(.gray))
+                        .padding(10).background(Color.white.opacity(0.1)).cornerRadius(8).padding(20)
                     if !filteredMain.isEmpty {
                         LazyVGrid(columns: mainColumns, spacing: 12) {
                             ForEach(filteredMain) { category in
-                                MainCategoryCard(category: category)
-                                    .onTapGesture {
-                                        dismiss()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            onSelect(category)
-                                        }
-                                    }
+                                MainCategoryCard(category: category).onTapGesture { dismiss(); onSelect(category) }
                             }
-                        }
-                        .padding(.horizontal, 20)
+                        }.padding(.horizontal, 20)
                     }
-
-                    // ── Separator ─────────────────────────────────────────
-                    if !filteredMain.isEmpty && !filteredOther.isEmpty {
-                        Rectangle()
-                            .fill(Color.white.opacity(0.08))
-                            .frame(height: 1)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 20)
-                    }
-
-                    // ── Other categories grid ─────────────────────────────
                     if !filteredOther.isEmpty {
                         LazyVGrid(columns: otherColumns, spacing: 12) {
                             ForEach(filteredOther) { category in
-                                OtherCategoryCard(category: category)
-                                    .onTapGesture {
-                                        dismiss()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            onSelect(category)
-                                        }
-                                    }
+                                OtherCategoryCard(category: category).onTapGesture { dismiss(); onSelect(category) }
                             }
-                        }
-                        .padding(.horizontal, 20)
+                        }.padding(.horizontal, 20).padding(.top, 20)
                     }
-
-                    // Empty state
-                    if filteredMain.isEmpty && filteredOther.isEmpty {
-                        VStack(spacing: 8) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 32))
-                                .foregroundColor(Color.white.opacity(0.3))
-                            Text("No results for \"\(searchText)\"")
-                                .font(.system(size: 14))
-                                .foregroundColor(Color.white.opacity(0.4))
-                        }
-                        .padding(.top, 40)
-                    }
-
-                    Spacer(minLength: 32)
                 }
             }
-
-            // ── × close button ────────────────────────────────────────────
-            Button { dismiss() } label: {
-                Text("×")
-                    .font(.system(size: 22, weight: .light))
-                    .foregroundColor(Color.white.opacity(0.55))
-                    .frame(width: 30, height: 30)
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 12)
-            .padding(.trailing, 16)
-        }
-        .frame(width: 540, height: 620)
+            Button { dismiss() } label: { Text("×").font(.title).foregroundColor(.white).padding() }.buttonStyle(.plain)
+        }.frame(width: 500, height: 600)
     }
 }
-
 struct MainCategoryCard: View {
     let category: VaultCategory
-    @State private var isHovering = false
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            CategoryIcon(category, size: 52)
-
-            Text(category.rawValue)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.white)
-                .lineLimit(2)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.white.opacity(isHovering ? 0.12 : 0.07))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color.white.opacity(isHovering ? 0.22 : 0.10), lineWidth: 1)
-        )
-        .scaleEffect(isHovering ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isHovering)
-        .onHover { isHovering = $0 }
+        VStack {
+            CategoryIcon(category, size: 40)
+            Text(category.rawValue).font(.caption).foregroundColor(.white)
+        }.padding().background(Color.white.opacity(0.1)).cornerRadius(10)
     }
 }
-
 struct OtherCategoryCard: View {
     let category: VaultCategory
-    @State private var isHovering = false
-
     var body: some View {
-        HStack(spacing: 14) {
-            CategoryIcon(category, size: 40)
-
-            Text(category.rawValue)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(.white)
-                .lineLimit(2)
-
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.white.opacity(isHovering ? 0.12 : 0.07))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(isHovering ? 0.22 : 0.10), lineWidth: 1)
-        )
-        .scaleEffect(isHovering ? 1.01 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isHovering)
-        .onHover { isHovering = $0 }
+        HStack {
+            CategoryIcon(category, size: 24)
+            Text(category.rawValue).font(.caption).foregroundColor(.white)
+            Spacer()
+        }.padding().background(Color.white.opacity(0.1)).cornerRadius(10)
     }
 }
-

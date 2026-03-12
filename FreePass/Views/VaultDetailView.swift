@@ -60,7 +60,8 @@ struct VaultDetailView: View {
                     metadataSection
                     dangerSection
                 }
-                .padding(24)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

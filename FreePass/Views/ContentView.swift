@@ -18,6 +18,7 @@ struct ContentView: View {
         }
         .frame(minWidth: 800, minHeight: 550)
         .background(Color.fpBackground)
+        .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.4), value: appState.isUnlocked)
         .animation(.easeInOut(duration: 0.4), value: appState.isFirstLaunch)
         .onAppear {
