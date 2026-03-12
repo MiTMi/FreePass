@@ -46,22 +46,31 @@ extension Color {
     )
     static let fpSelection = Color(red: 0.05, green: 0.38, blue: 0.95)
 
-    // Accent
-    static let fpAccentPurple = Color(red: 0.45, green: 0.30, blue: 1.0)
-    static let fpAccentBlue = Color(red: 0.25, green: 0.55, blue: 1.0)
-    static let fpAccentCyan = Color(red: 0.20, green: 0.75, blue: 0.95)
+    // Accent (Slightly adjusted for better contrast in both modes)
+    static let fpAccentPurple = dynamic(
+        light: NSColor(red: 100.0/255.0, green: 70.0/255.0, blue: 240.0/255.0, alpha: 1.0),
+        dark: NSColor(red: 115.0/255.0, green: 75.0/255.0, blue: 255.0/255.0, alpha: 1.0)
+    )
+    static let fpAccentBlue = dynamic(
+        light: NSColor(red: 40.0/255.0, green: 120.0/255.0, blue: 240.0/255.0, alpha: 1.0),
+        dark: NSColor(red: 65.0/255.0, green: 140.0/255.0, blue: 255.0/255.0, alpha: 1.0)
+    )
+    static let fpAccentCyan = dynamic(
+        light: NSColor(red: 30.0/255.0, green: 170.0/255.0, blue: 220.0/255.0, alpha: 1.0),
+        dark: NSColor(red: 50.0/255.0, green: 190.0/255.0, blue: 240.0/255.0, alpha: 1.0)
+    )
 
-    // Text
+    // Text (Already dynamic, but refining tertiary for Light mode)
     static let fpTextPrimary = dynamic(
         light: NSColor.black,
         dark: NSColor.white
     )
     static let fpTextSecondary = dynamic(
-        light: NSColor.systemGray,
+        light: NSColor(white: 0.35, alpha: 1.0),
         dark: NSColor(white: 0.55, alpha: 1.0)
     )
     static let fpTextTertiary = dynamic(
-        light: NSColor.lightGray,
+        light: NSColor(white: 0.55, alpha: 1.0),
         dark: NSColor(white: 0.35, alpha: 1.0)
     )
 
@@ -103,6 +112,63 @@ extension PasswordStrength {
 }
 
 // MARK: - Custom View Modifiers
+
+struct LiquidGlassModifier: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    var material: NSVisualEffectView.Material
+    var blendingMode: NSVisualEffectView.BlendingMode
+
+    func body(content: Content) -> some View {
+        let isDark = colorScheme == .dark
+        
+        content
+            .background(VisualEffectView(material: material, blendingMode: blendingMode))
+            .overlay(
+                ZStack {
+                    // Adaptive liquid sheen
+                    LinearGradient(
+                        colors: [
+                            (isDark ? Color.white : Color.white).opacity(isDark ? 0.12 : 0.4),
+                            .clear,
+                            (isDark ? Color.white : Color.black).opacity(isDark ? 0.01 : 0.03)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    
+                    // Glass highlight line at the very top (Brighter in Light mode for definition)
+                    VStack {
+                        Capsule()
+                            .fill(LinearGradient(
+                                colors: [
+                                    (isDark ? Color.white : Color.white).opacity(isDark ? 0.3 : 0.6),
+                                    .clear
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ))
+                            .frame(height: 0.5)
+                        Spacer()
+                    }
+                    
+                    // Edge Prism (thickness) - Darker in Light mode to define the shape
+                    RoundedRectangle(cornerRadius: 0)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    (isDark ? Color.white : Color.white).opacity(isDark ? 0.25 : 0.5),
+                                    .clear,
+                                    (isDark ? Color.black : Color.black).opacity(isDark ? 0.15 : 0.1)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.5
+                        )
+                }
+            )
+    }
+}
 
 struct FPCardStyle: ViewModifier {
     func body(content: Content) -> some View {
@@ -163,36 +229,7 @@ extension View {
 
     /// Applies a premium "Liquid Glass" effect to a view.
     func liquidGlass(material: NSVisualEffectView.Material = .sidebar, blendingMode: NSVisualEffectView.BlendingMode = .behindWindow) -> some View {
-        self.background(VisualEffectView(material: material, blendingMode: blendingMode))
-            .overlay(
-                ZStack {
-                    // Intense liquid sheen from top
-                    LinearGradient(
-                        colors: [.white.opacity(0.12), .clear, .white.opacity(0.01)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    
-                    // Glass highlight line at the very top
-                    VStack {
-                        Capsule()
-                            .fill(LinearGradient(colors: [.white.opacity(0.3), .clear], startPoint: .leading, endPoint: .trailing))
-                            .frame(height: 0.5)
-                        Spacer()
-                    }
-                    
-                    // Edge Prism (thickness)
-                    RoundedRectangle(cornerRadius: 0)
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.25), .clear, .black.opacity(0.15)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 0.5
-                        )
-                }
-            )
+        modifier(LiquidGlassModifier(material: material, blendingMode: blendingMode))
     }
 }
 

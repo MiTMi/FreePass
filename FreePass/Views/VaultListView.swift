@@ -556,7 +556,7 @@ private struct SidebarRow: View {
                     .foregroundColor(isSelected ? .fpSelection : .white)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(isSelected ? Color.white : Color(white: 0.3))
+                    .background(isSelected ? Color.white : Color.fpTextSecondary)
                     .clipShape(Capsule())
             }
         }
@@ -568,7 +568,7 @@ private struct SidebarRow: View {
                     Color.fpSelection
                         .shadow(color: Color.fpSelection.opacity(0.3), radius: 4, x: 0, y: 2)
                 } else if isHovering {
-                    Color.white.opacity(0.08)
+                    Color.fpTextPrimary.opacity(0.06)
                 }
             }
         )
@@ -650,45 +650,79 @@ struct CategorySelectionView: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    Text("What would you like to add?").font(.system(size: 22, weight: .bold)).foregroundColor(.white).padding(.top, 40)
-                    TextField("", text: $searchText, prompt: Text("Search categories").foregroundColor(.gray))
-                        .padding(10).background(Color.white.opacity(0.1)).cornerRadius(8).padding(20)
+                    Text("What would you like to add?")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(.fpTextPrimary)
+                        .padding(.top, 40)
+                    
+                    TextField("", text: $searchText, prompt: Text("Search categories").foregroundColor(.fpTextSecondary))
+                        .padding(10)
+                        .background(Color.fpTextPrimary.opacity(0.08))
+                        .cornerRadius(8)
+                        .padding(20)
+                    
                     if !filteredMain.isEmpty {
                         LazyVGrid(columns: mainColumns, spacing: 12) {
                             ForEach(filteredMain) { category in
-                                MainCategoryCard(category: category).onTapGesture { dismiss(); onSelect(category) }
+                                MainCategoryCard(category: category)
+                                    .onTapGesture { dismiss(); onSelect(category) }
                             }
-                        }.padding(.horizontal, 20)
+                        }
+                        .padding(.horizontal, 20)
                     }
+                    
                     if !filteredOther.isEmpty {
                         LazyVGrid(columns: otherColumns, spacing: 12) {
                             ForEach(filteredOther) { category in
-                                OtherCategoryCard(category: category).onTapGesture { dismiss(); onSelect(category) }
+                                OtherCategoryCard(category: category)
+                                    .onTapGesture { dismiss(); onSelect(category) }
                             }
-                        }.padding(.horizontal, 20).padding(.top, 20)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
                     }
                 }
             }
-            Button { dismiss() } label: { Text("×").font(.title).foregroundColor(.white).padding() }.buttonStyle(.plain)
-        }.frame(width: 500, height: 600)
+            
+            Button { dismiss() } label: {
+                Text("×")
+                    .font(.title)
+                    .foregroundColor(.fpTextPrimary)
+                    .padding()
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(width: 500, height: 600)
     }
 }
+
 struct MainCategoryCard: View {
     let category: VaultCategory
     var body: some View {
         VStack {
             CategoryIcon(category, size: 40)
-            Text(category.rawValue).font(.caption).foregroundColor(.white)
-        }.padding().background(Color.white.opacity(0.1)).cornerRadius(10)
+            Text(category.rawValue)
+                .font(.caption)
+                .foregroundColor(.fpTextPrimary)
+        }
+        .padding()
+        .background(Color.fpTextPrimary.opacity(0.06))
+        .cornerRadius(10)
     }
 }
+
 struct OtherCategoryCard: View {
     let category: VaultCategory
     var body: some View {
         HStack {
             CategoryIcon(category, size: 24)
-            Text(category.rawValue).font(.caption).foregroundColor(.white)
+            Text(category.rawValue)
+                .font(.caption)
+                .foregroundColor(.fpTextPrimary)
             Spacer()
-        }.padding().background(Color.white.opacity(0.1)).cornerRadius(10)
+        }
+        .padding()
+        .background(Color.fpTextPrimary.opacity(0.06))
+        .cornerRadius(10)
     }
 }
