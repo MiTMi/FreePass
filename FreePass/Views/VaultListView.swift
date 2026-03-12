@@ -107,15 +107,16 @@ struct VaultListView: View {
         } content: {
             itemList
                 .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 350)
+                .background(Color.fpList.ignoresSafeArea()) // Moved background here
                 .ignoresSafeArea(.container, edges: .top)
         } detail: {
             detailPane
                 .navigationSplitViewColumnWidth(min: 300, ideal: 500, max: 1000)
+                .background(Color.fpDetail.ignoresSafeArea()) // Moved background here
                 .ignoresSafeArea(.container, edges: .top)
         }
         .navigationSplitViewStyle(.balanced)
-        .background(Color.fpList.ignoresSafeArea())
-        .ignoresSafeArea()
+        // Removed global Color.fpList background from here
 
         .sheet(isPresented: $showingCategorySelection) {
             CategorySelectionView(onSelect: { category in
@@ -139,22 +140,27 @@ struct VaultListView: View {
 
     private var sidebar: some View {
         ZStack(alignment: .top) {
-            Color.fpSidebar.ignoresSafeArea()
+            // Apply Liquid Glass base
+            Color.clear.liquidGlass(material: .sidebar)
             
             VStack(spacing: 0) {
                 // Integrated Title Bar Area with Traffic Light Clearance
-                HStack(spacing: 14) {
+                HStack(spacing: 2) { // Tighter spacing for buttons with larger hit areas
                     Spacer().frame(width: trafficLightClearance)
                     
                     Button(action: { showingCategorySelection = true }) {
                         Image(systemName: "plus")
                             .font(.system(size: 13, weight: .semibold))
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     
                     Button(action: { showingGenerator = true }) {
                         Image(systemName: "key.fill")
                             .font(.system(size: 13, weight: .semibold))
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     
@@ -162,6 +168,8 @@ struct VaultListView: View {
                     SettingsLink {
                         Image(systemName: "gearshape.fill")
                             .font(.system(size: 13, weight: .semibold))
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     #endif
@@ -169,6 +177,8 @@ struct VaultListView: View {
                     Button(action: { appState.lock() }) {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 13, weight: .semibold))
+                            .frame(width: 32, height: 32)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     
@@ -176,7 +186,9 @@ struct VaultListView: View {
                 }
                 .foregroundColor(.fpTextPrimary)
                 .frame(height: titleBarHeight)
-                .padding(.top, 4) // Nudge down from very edge
+                .padding(.top, 30) // Clears the macOS system title bar drag region
+                .zIndex(100)
+                .contentShape(Rectangle())
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -277,7 +289,9 @@ struct VaultListView: View {
                     Spacer()
                 }
                 .frame(height: titleBarHeight)
-                .padding(.top, 4)
+                .padding(.top, 30)
+                .zIndex(100)
+                .contentShape(Rectangle())
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -410,6 +424,7 @@ struct VaultListView: View {
                 .padding(.horizontal, 8)
                 .background(Color.fpSurfaceHover.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .contentShape(Rectangle())
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
@@ -433,7 +448,8 @@ struct VaultListView: View {
                 // Integrated Title Bar Area
                 HStack { Spacer() }
                     .frame(height: titleBarHeight)
-                    .padding(.top, 4)
+                    .padding(.top, 30)
+                    .zIndex(100)
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -546,7 +562,16 @@ private struct SidebarRow: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(isSelected ? Color.fpSelection : (isHovering ? Color(white: 0.15) : Color.clear))
+        .background(
+            ZStack {
+                if isSelected {
+                    Color.fpSelection
+                        .shadow(color: Color.fpSelection.opacity(0.3), radius: 4, x: 0, y: 2)
+                } else if isHovering {
+                    Color.white.opacity(0.08)
+                }
+            }
+        )
         .cornerRadius(8)
         .padding(.horizontal, 8)
         .contentShape(Rectangle())
@@ -620,7 +645,9 @@ struct CategorySelectionView: View {
     let otherColumns = [GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            LinearGradient(colors: [Color(white: 0.1), Color(white: 0.15)], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            Color.clear.liquidGlass(material: .hudWindow)
+                .ignoresSafeArea()
+            
             ScrollView {
                 VStack(spacing: 0) {
                     Text("What would you like to add?").font(.system(size: 22, weight: .bold)).foregroundColor(.white).padding(.top, 40)

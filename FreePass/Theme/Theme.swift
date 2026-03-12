@@ -160,4 +160,58 @@ extension View {
     func fpTextField() -> some View {
         modifier(FPTextFieldStyle())
     }
+
+    /// Applies a premium "Liquid Glass" effect to a view.
+    func liquidGlass(material: NSVisualEffectView.Material = .sidebar, blendingMode: NSVisualEffectView.BlendingMode = .behindWindow) -> some View {
+        self.background(VisualEffectView(material: material, blendingMode: blendingMode))
+            .overlay(
+                ZStack {
+                    // Intense liquid sheen from top
+                    LinearGradient(
+                        colors: [.white.opacity(0.12), .clear, .white.opacity(0.01)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    
+                    // Glass highlight line at the very top
+                    VStack {
+                        Capsule()
+                            .fill(LinearGradient(colors: [.white.opacity(0.3), .clear], startPoint: .leading, endPoint: .trailing))
+                            .frame(height: 0.5)
+                        Spacer()
+                    }
+                    
+                    // Edge Prism (thickness)
+                    RoundedRectangle(cornerRadius: 0)
+                        .stroke(
+                            LinearGradient(
+                                colors: [.white.opacity(0.25), .clear, .black.opacity(0.15)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.5
+                        )
+                }
+            )
+    }
+}
+
+// MARK: - AppKit Bridges
+
+struct VisualEffectView: NSViewRepresentable {
+    var material: NSVisualEffectView.Material
+    var blendingMode: NSVisualEffectView.BlendingMode
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = material
+        view.blendingMode = blendingMode
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+        nsView.blendingMode = blendingMode
+    }
 }

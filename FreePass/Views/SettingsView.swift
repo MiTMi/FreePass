@@ -28,149 +28,157 @@ struct SettingsView: View {
     @State private var activeAlert: SettingsAlert?
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section(header: Text("Security")) {
-                    Picker("Auto-Lock", selection: $lockTimeout) {
-                        Text("1 Minute").tag(TimeInterval(60))
-                        Text("5 Minutes").tag(TimeInterval(300))
-                        Text("10 Minutes").tag(TimeInterval(600))
-                        Text("30 Minutes").tag(TimeInterval(1800))
-                        Text("1 Hour").tag(TimeInterval(3600))
-                        Text("Never").tag(TimeInterval(0))
-                    }
-                    .onChange(of: lockTimeout) { _, newValue in
-                        appState.lockTimeout = newValue
-                    }
-
-                    Picker("Clear Clipboard", selection: $clearClipboardDelay) {
-                        Text("10 Seconds").tag(TimeInterval(10))
-                        Text("30 Seconds").tag(TimeInterval(30))
-                        Text("1 Minute").tag(TimeInterval(60))
-                        Text("2 Minutes").tag(TimeInterval(120))
-                        Text("Never").tag(TimeInterval(0))
-                    }
-                    .onChange(of: clearClipboardDelay) { _, newValue in
-                        appState.clearClipboardDelay = newValue
-                    }
-
-                    Toggle("Lock Vault on Sleep", isOn: $lockOnSleep)
-                        .onChange(of: lockOnSleep) { _, newValue in
-                            appState.lockOnSleep = newValue
+        ZStack {
+            // Root glass layer that bleeds into the title bar
+            Color.clear.liquidGlass(material: .hudWindow)
+                .ignoresSafeArea()
+            
+            NavigationStack {
+                Form {
+                    Section(header: Text("Security")) {
+                        Picker("Auto-Lock", selection: $lockTimeout) {
+                            Text("1 Minute").tag(TimeInterval(60))
+                            Text("5 Minutes").tag(TimeInterval(300))
+                            Text("10 Minutes").tag(TimeInterval(600))
+                            Text("30 Minutes").tag(TimeInterval(1800))
+                            Text("1 Hour").tag(TimeInterval(3600))
+                            Text("Never").tag(TimeInterval(0))
+                        }
+                        .onChange(of: lockTimeout) { _, newValue in
+                            appState.lockTimeout = newValue
                         }
 
-                    if AppState().touchIDEnabled { // Just checking if it's already enabled, but wait, BiometricAuth could be checked
-                        Toggle("Enable Touch ID", isOn: $touchIDEnabled)
-                            .onChange(of: touchIDEnabled) { _, newValue in
-                                appState.touchIDEnabled = newValue
-                            }
-                    } else {
-                        Toggle("Enable Touch ID", isOn: $touchIDEnabled)
-                            .onChange(of: touchIDEnabled) { _, newValue in
-                                appState.touchIDEnabled = newValue
-                            }
-                    }
-                }
+                        Picker("Clear Clipboard", selection: $clearClipboardDelay) {
+                            Text("10 Seconds").tag(TimeInterval(10))
+                            Text("30 Seconds").tag(TimeInterval(30))
+                            Text("1 Minute").tag(TimeInterval(60))
+                            Text("2 Minutes").tag(TimeInterval(120))
+                            Text("Never").tag(TimeInterval(0))
+                        }
+                        .onChange(of: clearClipboardDelay) { _, newValue in
+                            appState.clearClipboardDelay = newValue
+                        }
 
-                Section(header: Text("General")) {
-                    Toggle("Launch at Login", isOn: $launchAtLogin)
-                        .onChange(of: launchAtLogin) { _, newValue in
-                            do {
+                        Toggle("Lock Vault on Sleep", isOn: $lockOnSleep)
+                            .onChange(of: lockOnSleep) { _, newValue in
+                                appState.lockOnSleep = newValue
+                            }
+
+                        if AppState().touchIDEnabled { // Just checking if it's already enabled, but wait, BiometricAuth could be checked
+                            Toggle("Enable Touch ID", isOn: $touchIDEnabled)
+                                .onChange(of: touchIDEnabled) { _, newValue in
+                                    appState.touchIDEnabled = newValue
+                                }
+                        } else {
+                            Toggle("Enable Touch ID", isOn: $touchIDEnabled)
+                                .onChange(of: touchIDEnabled) { _, newValue in
+                                    appState.touchIDEnabled = newValue
+                                }
+                        }
+                    }
+
+                    Section(header: Text("General")) {
+                        Toggle("Launch at Login", isOn: $launchAtLogin)
+                            .onChange(of: launchAtLogin) { _, newValue in
+                                do {
+                                    if newValue {
+                                        try SMAppService.mainApp.register()
+                                    } else {
+                                        try SMAppService.mainApp.unregister()
+                                    }
+                                } catch {
+                                    print("Failed to toggle launch at login: \(error)")
+                                    launchAtLogin = SMAppService.mainApp.status == .enabled
+                                }
+                            }
+
+                        Toggle("Show Menu Bar Icon", isOn: $showMenuBarIcon)
+                            .onChange(of: showMenuBarIcon) { _, newValue in
+                                appState.showMenuBarIcon = newValue
+                            }
+                            
+                        Toggle("Enable Safari Extension Integration", isOn: $extensionEnabled)
+                            .onChange(of: extensionEnabled) { _, newValue in
+                                UserDefaults.standard.set(newValue, forKey: "extensionEnabled")
                                 if newValue {
-                                    try SMAppService.mainApp.register()
+                                    ExtensionServer.shared.start()
                                 } else {
-                                    try SMAppService.mainApp.unregister()
+                                    ExtensionServer.shared.stop()
                                 }
-                            } catch {
-                                print("Failed to toggle launch at login: \(error)")
-                                launchAtLogin = SMAppService.mainApp.status == .enabled
                             }
-                        }
-
-                    Toggle("Show Menu Bar Icon", isOn: $showMenuBarIcon)
-                        .onChange(of: showMenuBarIcon) { _, newValue in
-                            appState.showMenuBarIcon = newValue
-                        }
                         
-                    Toggle("Enable Safari Extension Integration", isOn: $extensionEnabled)
-                        .onChange(of: extensionEnabled) { _, newValue in
-                            UserDefaults.standard.set(newValue, forKey: "extensionEnabled")
-                            if newValue {
-                                ExtensionServer.shared.start()
-                            } else {
-                                ExtensionServer.shared.stop()
-                            }
-                        }
-                    
-                    if extensionEnabled {
-                        Button("Open Safari Settings to Enable Extension") {
-                            SFSafariApplication.showPreferencesForExtension(withIdentifier: "com.freepass.app.FreePassExtension.Extension") { error in
-                                if let error = error {
-                                    print("Error opening Safari preferences: \(error)")
+                        if extensionEnabled {
+                            Button("Open Safari Settings to Enable Extension") {
+                                SFSafariApplication.showPreferencesForExtension(withIdentifier: "com.freepass.app.FreePassExtension.Extension") { error in
+                                    if let error = error {
+                                        print("Error opening Safari preferences: \(error)")
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                
-                Section(header: Text("Default Password Generation")) {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text("Length")
-                            Spacer()
-                            Text("\(Int(defaultPasswordLength))")
-                                .foregroundColor(.secondary)
+                    
+                    Section(header: Text("Default Password Generation")) {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text("Length")
+                                Spacer()
+                                Text("\(Int(defaultPasswordLength))")
+                                    .foregroundColor(.secondary)
+                            }
+                            Slider(value: $defaultPasswordLength, in: 8...64, step: 1)
+                                .onChange(of: defaultPasswordLength) { _, newValue in
+                                    UserDefaults.standard.set(Int(newValue), forKey: "defaultPasswordLength")
+                                }
                         }
-                        Slider(value: $defaultPasswordLength, in: 8...64, step: 1)
-                            .onChange(of: defaultPasswordLength) { _, newValue in
-                                UserDefaults.standard.set(Int(newValue), forKey: "defaultPasswordLength")
+                        Toggle("Uppercase (A-Z)", isOn: $defaultPasswordUppercase)
+                            .onChange(of: defaultPasswordUppercase) { _, newValue in
+                                UserDefaults.standard.set(newValue, forKey: "defaultPasswordUppercase")
+                            }
+                        Toggle("Lowercase (a-z)", isOn: $defaultPasswordLowercase)
+                            .onChange(of: defaultPasswordLowercase) { _, newValue in
+                                UserDefaults.standard.set(newValue, forKey: "defaultPasswordLowercase")
+                            }
+                        Toggle("Digits (0-9)", isOn: $defaultPasswordDigits)
+                            .onChange(of: defaultPasswordDigits) { _, newValue in
+                                UserDefaults.standard.set(newValue, forKey: "defaultPasswordDigits")
+                            }
+                        Toggle("Symbols (!@#$)", isOn: $defaultPasswordSymbols)
+                            .onChange(of: defaultPasswordSymbols) { _, newValue in
+                                UserDefaults.standard.set(newValue, forKey: "defaultPasswordSymbols")
                             }
                     }
-                    Toggle("Uppercase (A-Z)", isOn: $defaultPasswordUppercase)
-                        .onChange(of: defaultPasswordUppercase) { _, newValue in
-                            UserDefaults.standard.set(newValue, forKey: "defaultPasswordUppercase")
+                    
+                    Section(header: Text("Data")) {
+                        Button("Export to CSV (Unencrypted)...") {
+                            activeAlert = .csvWarning
                         }
-                    Toggle("Lowercase (a-z)", isOn: $defaultPasswordLowercase)
-                        .onChange(of: defaultPasswordLowercase) { _, newValue in
-                            UserDefaults.standard.set(newValue, forKey: "defaultPasswordLowercase")
+                        Button("Export Encrypted Backup...") {
+                            exportEncryptedBackup()
                         }
-                    Toggle("Digits (0-9)", isOn: $defaultPasswordDigits)
-                        .onChange(of: defaultPasswordDigits) { _, newValue in
-                            UserDefaults.standard.set(newValue, forKey: "defaultPasswordDigits")
+                        Button("Import from CSV...") {
+                            importFromCSV()
                         }
-                    Toggle("Symbols (!@#$)", isOn: $defaultPasswordSymbols)
-                        .onChange(of: defaultPasswordSymbols) { _, newValue in
-                            UserDefaults.standard.set(newValue, forKey: "defaultPasswordSymbols")
+                        Button("Import Encrypted Backup...") {
+                            importEncryptedBackup()
                         }
-                }
-                
-                Section(header: Text("Data")) {
-                    Button("Export to CSV (Unencrypted)...") {
-                        activeAlert = .csvWarning
                     }
-                    Button("Export Encrypted Backup...") {
-                        exportEncryptedBackup()
-                    }
-                    Button("Import from CSV...") {
-                        importFromCSV()
-                    }
-                    Button("Import Encrypted Backup...") {
-                        importEncryptedBackup()
+                    
+                    Section(header: Text("Vault")) {
+                        Button("Change Master Password...") {
+                            activeAlert = .comingSoon("Master Password change will be available in the next release.")
+                        }
                     }
                 }
-                
-                Section(header: Text("Vault")) {
-                    Button("Change Master Password...") {
-                        activeAlert = .comingSoon("Master Password change will be available in the next release.")
-                    }
-                }
-            }
-            .formStyle(.grouped)
-            .navigationTitle("Settings")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        dismiss()
+                .formStyle(.grouped)
+                .scrollContentBackground(.hidden)
+                .navigationTitle("Settings")
+                .toolbarBackground(.hidden) // Fixes the 'navigationBar' is unavailable error
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Close") {
+                            dismiss()
+                        }
                     }
                 }
             }
