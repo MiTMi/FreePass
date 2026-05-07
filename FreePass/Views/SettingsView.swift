@@ -26,6 +26,7 @@ struct SettingsView: View {
     @State private var defaultPasswordSymbols: Bool = UserDefaults.standard.object(forKey: "defaultPasswordSymbols") != nil ? UserDefaults.standard.bool(forKey: "defaultPasswordSymbols") : true
     
     @State private var activeAlert: SettingsAlert?
+    @State private var showingChangeMasterPassword = false
 
     var body: some View {
         ZStack {
@@ -64,13 +65,8 @@ struct SettingsView: View {
                                 appState.lockOnSleep = newValue
                             }
 
-                        if AppState().touchIDEnabled { // Just checking if it's already enabled, but wait, BiometricAuth could be checked
-                            Toggle("Enable Touch ID", isOn: $touchIDEnabled)
-                                .onChange(of: touchIDEnabled) { _, newValue in
-                                    appState.touchIDEnabled = newValue
-                                }
-                        } else {
-                            Toggle("Enable Touch ID", isOn: $touchIDEnabled)
+                        if BiometricAuth.isAvailable {
+                            Toggle("Enable \(BiometricAuth.biometricType)", isOn: $touchIDEnabled)
                                 .onChange(of: touchIDEnabled) { _, newValue in
                                     appState.touchIDEnabled = newValue
                                 }
@@ -166,7 +162,7 @@ struct SettingsView: View {
                     
                     Section(header: Text("Vault")) {
                         Button("Change Master Password...") {
-                            activeAlert = .comingSoon("Master Password change will be available in the next release.")
+                            showingChangeMasterPassword = true
                         }
                     }
                 }
@@ -198,6 +194,11 @@ struct SettingsView: View {
             case .comingSoon(let message):
                 return Alert(title: Text("Coming Soon"), message: Text(message), dismissButton: .default(Text("OK")))
             }
+        }
+        .sheet(isPresented: $showingChangeMasterPassword) {
+            ChangeMasterPasswordView()
+                .environment(appState)
+                .modelContext(modelContext)
         }
         .onAppear {
             lockTimeout = appState.lockTimeout

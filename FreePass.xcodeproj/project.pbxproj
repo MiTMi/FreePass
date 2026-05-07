@@ -9,12 +9,11 @@
 /* Begin PBXBuildFile section */
 		037E8315F2A2CFD2CACA04E7 /* VaultDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1CFC041BD48AD0D160BE95 /* VaultDetailView.swift */; };
 		0990AF10522D7C6B425FE2FE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7543175A6296806120ECFC1 /* AppState.swift */; };
-		0B3A1C2D4E5F678901234567 /* CategoryIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3A1C2D4E5F67890123456A /* CategoryIcon.swift */; };
-		0C1A2B3D4E5F67890ABCDEF1 /* AddEditItemSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1A2B3D4E5F67890ABCDEF0 /* AddEditItemSupport.swift */; };
 		1060BB71A65F2381EAEF375D /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F2C7501A86DAA0CB7E83B4 /* ClipboardManager.swift */; };
 		168429805D1B5CAFD8D5F2BD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5C5F1A4DD90D5BA3C6845C /* SettingsView.swift */; };
 		1C221CAAD08BE0399991C95F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282E1054C1F6AE341AE844B4 /* SafariWebExtensionHandler.swift */; };
 		1C4BF140E659E29A1076894D /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = C563CACEDD4096BC6EA292D8 /* manifest.json */; };
+		1E654616DAD3B208D026C7F1 /* CategoryIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D30488285DEE343F601494B /* CategoryIcon.swift */; };
 		2388CBE4763F16B2103CF044 /* UnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0E9469D4095BDDE7A37350 /* UnlockView.swift */; };
 		257FAC795ECF6B175EE44CD4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9593811AF11CE3332808FF1E /* ViewController.swift */; };
 		26991DAA53F0C097C1ED2A90 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8081AD8186BDB4CC0A5A9EB0 /* KeychainManager.swift */; };
@@ -31,6 +30,7 @@
 		94C5597727D67058F844B227 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 7415111C42693027296063E1 /* images */; };
 		951305E5AF5C0190D27419E1 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = CF81A89EF03A69CC96D423A7 /* _locales */; };
 		96DC209BFB190C399F601903 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A9D1F089185CA366CC67B1 /* ContentView.swift */; };
+		97FE136E4AF6DB37B7A1CE36 /* AddEditItemSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2092179C5B0B4CE289C4CDDF /* AddEditItemSupport.swift */; };
 		9C08550A1411B3ABEC3C1D34 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = CF1A8A35B42FC459EBEAA752 /* popup.html */; };
 		9FDE49FD888221D444E521FD /* FaviconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113AB6E631C8FF44D1349287 /* FaviconView.swift */; };
 		A5BDB08E63A6DF33A66A25F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733A24ADC8158A0A679D262 /* AppDelegate.swift */; };
@@ -48,6 +48,7 @@
 		EC52D85A25C842523A74A8C3 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 9E812FB35EF54C7A986E1AC2 /* Main.html */; };
 		F1891D8EE639291742814791 /* FreePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73591F7DE3C1F27564D01CC1 /* FreePassApp.swift */; };
 		F3378715C51E2EA12B381D50 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 50CD791D43E838B209408B45 /* Style.css */; };
+		FC65D98A8D0756BBBE42E90E /* ChangeMasterPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FF5D2DEE49AD7E6F13A00D /* ChangeMasterPasswordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,10 +85,9 @@
 /* Begin PBXFileReference section */
 		07CD1C7AF65F21C8AD6EA262 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0EFA0867C09F4DD5583F3F0C /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		0B3A1C2D4E5F67890123456A /* CategoryIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIcon.swift; sourceTree = "<group>"; };
-		0C1A2B3D4E5F67890ABCDEF0 /* AddEditItemSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditItemSupport.swift; sourceTree = "<group>"; };
 		113AB6E631C8FF44D1349287 /* FaviconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconView.swift; sourceTree = "<group>"; };
 		16272795558EFD0A2644825D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		2092179C5B0B4CE289C4CDDF /* AddEditItemSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditItemSupport.swift; sourceTree = "<group>"; };
 		222F9B8FA271603FC0AE61E3 /* AddEditItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditItemView.swift; sourceTree = "<group>"; };
 		27043D5869BEDC380E7AAE60 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		282E1054C1F6AE341AE844B4 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
@@ -108,12 +108,14 @@
 		73591F7DE3C1F27564D01CC1 /* FreePassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreePassApp.swift; sourceTree = "<group>"; };
 		7415111C42693027296063E1 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = "FreePassExtension Extension/Resources/images"; sourceTree = SOURCE_ROOT; };
 		7733A24ADC8158A0A679D262 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7D30488285DEE343F601494B /* CategoryIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIcon.swift; sourceTree = "<group>"; };
 		7E31D60D0A4B15B988595DC6 /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
 		8081AD8186BDB4CC0A5A9EB0 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		81337DF13641B4E71EA16851 /* KeyDerivation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivation.swift; sourceTree = "<group>"; };
 		868484180026D9DCF446AB77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		887EDFB70C2F5486EC4C34E9 /* FreePassExtension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "FreePassExtension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		91A9D1F089185CA366CC67B1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		91FF5D2DEE49AD7E6F13A00D /* ChangeMasterPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeMasterPasswordView.swift; sourceTree = "<group>"; };
 		9593811AF11CE3332808FF1E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		99FDD91658AFA04515281EE8 /* VaultListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultListView.swift; sourceTree = "<group>"; };
 		B7543175A6296806120ECFC1 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -198,9 +200,10 @@
 		6A6D6309DE072B8198F06614 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2092179C5B0B4CE289C4CDDF /* AddEditItemSupport.swift */,
 				222F9B8FA271603FC0AE61E3 /* AddEditItemView.swift */,
-				0C1A2B3D4E5F67890ABCDEF0 /* AddEditItemSupport.swift */,
-				0B3A1C2D4E5F67890123456A /* CategoryIcon.swift */,
+				7D30488285DEE343F601494B /* CategoryIcon.swift */,
+				91FF5D2DEE49AD7E6F13A00D /* ChangeMasterPasswordView.swift */,
 				91A9D1F089185CA366CC67B1 /* ContentView.swift */,
 				7E31D60D0A4B15B988595DC6 /* MenuBarPopoverView.swift */,
 				6B5F421A9E640075EA7AA259 /* OnboardingView.swift */,
@@ -434,11 +437,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97FE136E4AF6DB37B7A1CE36 /* AddEditItemSupport.swift in Sources */,
 				CD4469FE9C265ADF56312BF8 /* AddEditItemView.swift in Sources */,
-				0C1A2B3D4E5F67890ABCDEF1 /* AddEditItemSupport.swift in Sources */,
 				0990AF10522D7C6B425FE2FE /* AppState.swift in Sources */,
 				BEFD3E436AEB20B9574F49E5 /* BiometricAuth.swift in Sources */,
-				0B3A1C2D4E5F678901234567 /* CategoryIcon.swift in Sources */,
+				1E654616DAD3B208D026C7F1 /* CategoryIcon.swift in Sources */,
+				FC65D98A8D0756BBBE42E90E /* ChangeMasterPasswordView.swift in Sources */,
 				1060BB71A65F2381EAEF375D /* ClipboardManager.swift in Sources */,
 				96DC209BFB190C399F601903 /* ContentView.swift in Sources */,
 				758173F0DCB305154570381F /* CryptoManager.swift in Sources */,

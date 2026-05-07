@@ -20,7 +20,25 @@ enum BiometricAuth {
         case .touchID: return "Touch ID"
         case .faceID: return "Face ID"
         case .opticID: return "Optic ID"
+        case .none: return "Biometrics"
         @unknown default: return "Biometrics"
+        }
+    }
+
+    /// Prompts for a biometric check. Used to confirm the user before a
+    /// destructive action when the vault is already unlocked (e.g. changing
+    /// the master password without typing the old one).
+    static func evaluate(reason: String) async -> Bool {
+        await withCheckedContinuation { continuation in
+            let context = LAContext()
+            var error: NSError?
+            guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+                continuation.resume(returning: false)
+                return
+            }
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { ok, _ in
+                continuation.resume(returning: ok)
+            }
         }
     }
 }
