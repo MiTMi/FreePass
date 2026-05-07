@@ -3,41 +3,30 @@
 // All credential lookups go to the FreePass app's localhost IPC server. That
 // server requires a Bearer token, provisioned by the main app and exposed to
 // us through the SafariWebExtensionHandler running in our extension's process.
-// We cache the token in `browser.storage.local` and refresh it on 401.
+// We fetch the current token via native messaging on every request — the
+// handler reads it from the shared keychain in microseconds, and avoiding a
+// local cache means the token automatically follows any rotation by the app.
 
 const SERVER_URL = "http://127.0.0.1:54321/";
 
-async function getToken({ refresh = false } = {}) {
-    if (!refresh) {
-        const cached = await browser.storage.local.get("ipc_token");
-        if (cached && cached.ipc_token) return cached.ipc_token;
-    }
+async function getToken() {
     try {
-        const response = await browser.runtime.sendNativeMessage("com.freepass.app.FreePassExtension.Extension", { command: "get_token" });
-        if (response && response.token) {
-            await browser.storage.local.set({ ipc_token: response.token });
-            return response.token;
-        }
+        const response = await browser.runtime.sendNativeMessage(
+            "com.freepass.app.FreePassExtension.Extension",
+            { command: "get_token" }
+        );
+        return response?.token ?? null;
     } catch (e) {
         console.error("FreePass: native messaging failed:", e);
+        return null;
     }
-    return null;
 }
 
 async function fetchCredentials(domain) {
-    let token = await getToken();
-    const doFetch = async (bearer) => {
-        return fetch(`${SERVER_URL}?domain=${encodeURIComponent(domain)}`, {
-            headers: bearer ? { "Authorization": "Bearer " + bearer } : {}
-        });
-    };
-
-    let res = await doFetch(token);
-    if (res.status === 401) {
-        // Token may have been rotated — refresh from the handler and retry once.
-        token = await getToken({ refresh: true });
-        if (token) res = await doFetch(token);
-    }
+    const token = await getToken();
+    const res = await fetch(`${SERVER_URL}?domain=${encodeURIComponent(domain)}`, {
+        headers: token ? { "Authorization": "Bearer " + token } : {}
+    });
     if (!res.ok) {
         throw new Error(`FreePass IPC returned ${res.status}`);
     }
